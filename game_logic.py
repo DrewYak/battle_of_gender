@@ -40,6 +40,15 @@ class Game:
             warrior.print_warrior_info()
         print("-----------------------")
 
+    def distance(self, x1, y1, x2, y2):
+        if (0 <= x1 < self.MAX_SIZE_X and
+                0 <= y1 < self.MAX_SIZE_Y and
+                0 <= x2 < self.MAX_SIZE_X and
+                0 <= y2 < self.MAX_SIZE_Y):
+            return abs(x1 - x2) + abs(y1 - y2)
+        else:
+            return -1
+
     def select(self, x, y):
         if 0 <= x < self.MAX_SIZE_X and 0 <= y < self.MAX_SIZE_Y:
             self.selected_cell = (x, y)
@@ -51,11 +60,11 @@ class Game:
                 0 <= to_y < self.MAX_SIZE_Y and
                 (from_x, from_y) in self.warriors and
                 (to_x, to_y) not in self.warriors and
-                (abs(from_x - to_x) + abs(from_y - to_y)) <= self.move_points):
+                self.distance(from_x, from_y, to_x, to_y) <= self.move_points):
             w = self.warriors[(from_x, from_y)]
             self.warriors[(to_x, to_y)] = w
             del self.warriors[(from_x, from_y)]
-            self.move_points -= abs(from_x - to_x) + abs(from_y - to_y)
+            self.move_points -= self.distance(from_x, from_y, to_x, to_y)
             self.select(to_x, to_y)
 
     def get_count_warriors(self, team):
