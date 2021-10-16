@@ -21,6 +21,7 @@ class Warrior:
 class Game:
     MAX_SIZE_X = 8
     MAX_SIZE_Y = 8
+    DEFAULT_MOVE_POINTS = 10
 
     def __init__(self, mode, move_points, selected_cell, warriors):
         self.mode = mode
@@ -56,6 +57,25 @@ class Game:
             del self.warriors[(from_x, from_y)]
             self.move_points -= abs(from_x - to_x) + abs(from_y - to_y)
             self.select(to_x, to_y)
+
+    def get_count_warriors(self, team):
+        count = 0
+        for coordinates, warrior in self.warriors:
+            if warrior.team == team:
+                count += 1
+        return count
+
+    def end_turn(self):
+        if self.get_count_warriors("M") == 0:
+            self.mode = "Win W"
+        elif self.get_count_warriors("W") == 0:
+            self.mode = "Win M"
+        elif self.mode == "Turn M":
+            self.mode == "Turn W"
+            self.move_points = self.DEFAULT_MOVE_POINTS
+        elif self.mode == "Turn W":
+            self.mode == "Turn M"
+            self.move_points = self.DEFAULT_MOVE_POINTS
 
 
 if __name__ == "__main__":
