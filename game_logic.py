@@ -21,6 +21,9 @@ class Warrior:
 
 class Game:
 
+    MAX_SIZE_X = 8
+    MAX_SIZE_Y = 8
+
     def __init__(self, mode, move_points, selected_cell, warriors):
         self.mode = mode
         self.move_points = move_points
@@ -35,6 +38,11 @@ class Game:
             print(coordinates, end=' ')
             warrior.print_warrior_info()
         print(self.warriors)
+
+    def select(self, x, y):
+        if (x < self.MAX_SIZE_X) and (y < self.MAX_SIZE_Y):
+            self.selected_cell = (x, y)
+
 
 
 if __name__ == "__main__":
