@@ -1,4 +1,13 @@
+from pygame.tests.test_utils import endian
+
+
 class Warrior:
+
+    DAMAGE_FIELD_M_PAL = [[0, 0, 0, 0, 0],
+                          [0, 4, 6, 4, 0],
+                          [0, 6, 0, 6, 0],
+                          [0, 4, 6, 4, 0],
+                          [0, 0, 0, 0, 0]]
 
     def __init__(self, team, health, number_of_attack, damage_field):
         self.team = team
@@ -7,9 +16,7 @@ class Warrior:
         self.damage_field = damage_field
 
     def print_warrior_info(self):
-        print(self.team)
-        print(self.health)
-        print(self.number_of_attack)
+        print(self.team, self.health, self.number_of_attack)
 
 
 class Game:
@@ -24,6 +31,26 @@ class Game:
         print(self.mode)
         print(self.move_points)
         print(self.selected_cell)
-        for warrior in self.warriors:
+        for coordinates, warrior in self.warriors.items():
+            print(coordinates, end=' ')
             warrior.print_warrior_info()
         print(self.warriors)
+
+
+if __name__ == "__main__":
+    w1 = Warrior("M", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
+    w2 = Warrior("M", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
+    w3 = Warrior("M", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
+    w4 = Warrior("W", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
+    w5 = Warrior("W", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
+    w6 = Warrior("W", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
+
+    ws = {(0, 0): w1,
+          (0, 1): w2,
+          (0, 2): w3,
+          (7, 0): w4,
+          (7, 1): w5,
+          (7, 2): w6}
+
+    g = Game("Turn_M", 10, (0,0), ws)
+    g.print_game_info()
