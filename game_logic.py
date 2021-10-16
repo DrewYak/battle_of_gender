@@ -2,7 +2,6 @@ from pygame.tests.test_utils import endian
 
 
 class Warrior:
-
     DAMAGE_FIELD_M_PAL = [[0, 0, 0, 0, 0],
                           [0, 4, 6, 4, 0],
                           [0, 6, 0, 6, 0],
@@ -20,7 +19,6 @@ class Warrior:
 
 
 class Game:
-
     MAX_SIZE_X = 8
     MAX_SIZE_Y = 8
 
@@ -31,18 +29,33 @@ class Game:
         self.warriors = warriors
 
     def print_game_info(self):
-        print(self.mode)
-        print(self.move_points)
-        print(self.selected_cell)
+        print()
+        print("------ Game Info ------")
+        print("Mode = {0}".format(self.mode))
+        print("Move points = {0}".format(self.move_points))
+        print("Selected cell = {0}".format(self.selected_cell))
         for coordinates, warrior in self.warriors.items():
             print(coordinates, end=' ')
             warrior.print_warrior_info()
-        print(self.warriors)
+        print("-----------------------")
 
     def select(self, x, y):
-        if (x < self.MAX_SIZE_X) and (y < self.MAX_SIZE_Y):
+        if 0 <= x < self.MAX_SIZE_X and 0 <= y < self.MAX_SIZE_Y:
             self.selected_cell = (x, y)
 
+    def go(self, from_x, from_y, to_x, to_y):
+        if (0 <= from_x < self.MAX_SIZE_X and
+                0 <= from_y < self.MAX_SIZE_Y and
+                0 <= to_x < self.MAX_SIZE_X and
+                0 <= to_y < self.MAX_SIZE_Y and
+                (from_x, from_y) in self.warriors and
+                (to_x, to_y) not in self.warriors and
+                (abs(from_x - to_x) + abs(from_y - to_y)) <= self.move_points):
+            w = self.warriors[(from_x, from_y)]
+            self.warriors[(to_x, to_y)] = w
+            del self.warriors[(from_x, from_y)]
+            self.move_points -= abs(from_x - to_x) + abs(from_y - to_y)
+            self.select(to_x, to_y)
 
 
 if __name__ == "__main__":
@@ -60,5 +73,7 @@ if __name__ == "__main__":
           (7, 1): w5,
           (7, 2): w6}
 
-    g = Game("Turn_M", 10, (0,0), ws)
+    g = Game("Turn_M", 10, (0, 0), ws)
+    g.print_game_info()
+    g.go(0, 0, 3, 0)
     g.print_game_info()
