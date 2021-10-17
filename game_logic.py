@@ -19,8 +19,10 @@ class Warrior:
 
 
 class Game:
-    MAX_SIZE_X = 8
-    MAX_SIZE_Y = 8
+    DEFAULT_SIZE_X = 8
+    DEFAULT_SIZE_Y = 8
+    DEFAULT_COUNT_M = 3
+    DEFAULT_COUNT_W = 3
     DEFAULT_MOVE_POINTS = 10
 
     def __init__(self, mode, move_points, selected_cell, warriors):
@@ -41,23 +43,23 @@ class Game:
         print("-----------------------")
 
     def distance(self, x1, y1, x2, y2):
-        if (0 <= x1 < self.MAX_SIZE_X and
-                0 <= y1 < self.MAX_SIZE_Y and
-                0 <= x2 < self.MAX_SIZE_X and
-                0 <= y2 < self.MAX_SIZE_Y):
+        if (0 <= x1 < self.DEFAULT_SIZE_X and
+                0 <= y1 < self.DEFAULT_SIZE_Y and
+                0 <= x2 < self.DEFAULT_SIZE_X and
+                0 <= y2 < self.DEFAULT_SIZE_Y):
             return abs(x1 - x2) + abs(y1 - y2)
         else:
             return -1
 
     def select(self, x, y):
-        if 0 <= x < self.MAX_SIZE_X and 0 <= y < self.MAX_SIZE_Y:
+        if 0 <= x < self.DEFAULT_SIZE_X and 0 <= y < self.DEFAULT_SIZE_Y:
             self.selected_cell = (x, y)
 
     def go(self, from_x, from_y, to_x, to_y):
-        if (0 <= from_x < self.MAX_SIZE_X and
-                0 <= from_y < self.MAX_SIZE_Y and
-                0 <= to_x < self.MAX_SIZE_X and
-                0 <= to_y < self.MAX_SIZE_Y and
+        if (0 <= from_x < self.DEFAULT_SIZE_X and
+                0 <= from_y < self.DEFAULT_SIZE_Y and
+                0 <= to_x < self.DEFAULT_SIZE_X and
+                0 <= to_y < self.DEFAULT_SIZE_Y and
                 (from_x, from_y) in self.warriors and
                 (to_x, to_y) not in self.warriors and
                 self.distance(from_x, from_y, to_x, to_y) <= self.move_points):
