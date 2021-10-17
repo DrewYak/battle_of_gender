@@ -21,7 +21,7 @@ class Warrior:
 class Game:
     DEFAULT_SIZE_X = 8
     DEFAULT_SIZE_Y = 8
-    DEFAULT_COUNT = {"M": 4, "W": 4}
+    DEFAULT_COUNT = {"M": 3, "W": 3}
     DEFAULT_MOVE_POINTS = 10
 
     def __init__(self, mode, move_points, selected_cell, warriors):
