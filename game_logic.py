@@ -23,6 +23,7 @@ class Game:
     DEFAULT_SIZE_Y = 8
     DEFAULT_COUNT = {"M": 3, "W": 3}
     DEFAULT_MOVE_POINTS = 10
+    DEFAULT_NUMBER_OF_ATTACK = 1
 
     def __init__(self, mode, move_points, selected_cell, warriors):
         self.mode = mode
@@ -82,6 +83,29 @@ class Game:
                 count += 1
         return count
 
+    def attack(self, from_x, from_y):
+        attack_cell = (from_x, from_y)
+        if (0 <= from_x < self.DEFAULT_SIZE_X and
+                0 <= from_y < self.DEFAULT_SIZE_Y and
+                attack_cell in self.warriors and
+                "Turn " + self.warriors[attack_cell].team == self.mode):
+            self.warriors[attack_cell].number_of_attack -= 1
+            for dx in range(-2, 3, 1):
+                for dy in range (-2, 3, 1):
+                    victim_cell = (from_x + dx, from_y + dy)
+                    if (0 <= from_x + dx < Game.DEFAULT_SIZE_X and
+                            0 <= from_y + dy < Game.DEFAULT_SIZE_Y and
+                            victim_cell in self.warriors and
+                            self.warriors[attack_cell] != self.warriors[victim_cell]):
+                        self.warriors[victim_cell].health -= self.warriors[attack_cell].damage_field[2-dy][2+dx]
+                        if self.warriors[victim_cell].health <= 0:
+                            if self.get_count_warriors(self.warriors[victim_cell].team) == 1:
+                                del self.warriors[victim_cell]
+                                self.mode = "Win " + self.warriors[attack_cell].team
+                            else:
+                                del self.warriors[victim_cell]
+
+
     def end_turn(self):
         if self.get_count_warriors("M") == 0:
             self.mode = "Win W"
@@ -110,9 +134,12 @@ if __name__ == "__main__":
           (7, 1): w5,
           (7, 2): w6}
 
-    g = Game("Turn_M", 10, (0, 0), ws)
+    g = Game("Turn M", 10, (0, 0), ws)
     g.print_game_info()
-    g.go(0, 0, 3, 0)
+    g.go(0, 0, 6, 0)
     g.print_game_info()
     g.add(5, 5, w1)
     g.print_game_info()
+    g.attack(6, 0)
+    g.print_game_info()
+
