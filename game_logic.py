@@ -21,8 +21,7 @@ class Warrior:
 class Game:
     DEFAULT_SIZE_X = 8
     DEFAULT_SIZE_Y = 8
-    DEFAULT_COUNT_M = 3
-    DEFAULT_COUNT_W = 3
+    DEFAULT_COUNT = {"M": 4, "W": 4}
     DEFAULT_MOVE_POINTS = 10
 
     def __init__(self, mode, move_points, selected_cell, warriors):
@@ -41,6 +40,13 @@ class Game:
             print(coordinates, end=' ')
             warrior.print_warrior_info()
         print("-----------------------")
+
+    def add(self, x, y, warrior):
+        if (0 <= x < self.DEFAULT_SIZE_X and
+                0 <= y < self.DEFAULT_SIZE_Y and
+                (x, y) not in self.warriors and
+                self.get_count_warriors(warrior.team) < self.DEFAULT_COUNT[warrior.team]):
+            self.warriors[(x, y)] = warrior
 
     def distance(self, x1, y1, x2, y2):
         if (0 <= x1 < self.DEFAULT_SIZE_X and
@@ -71,7 +77,7 @@ class Game:
 
     def get_count_warriors(self, team):
         count = 0
-        for coordinates, warrior in self.warriors:
+        for warrior in self.warriors.values():
             if warrior.team == team:
                 count += 1
         return count
@@ -107,4 +113,6 @@ if __name__ == "__main__":
     g = Game("Turn_M", 10, (0, 0), ws)
     g.print_game_info()
     g.go(0, 0, 3, 0)
+    g.print_game_info()
+    g.add(5, 5, w1)
     g.print_game_info()
