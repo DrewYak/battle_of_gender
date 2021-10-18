@@ -64,11 +64,37 @@ class GameTest(TestCase):
         self.assertEqual(3, g.get_count_warriors("M"))
         self.assertEqual(3, g.get_count_warriors("W"))
 
-    def test_start(self):
+    def test_go(self):
         g.start("M")
         self.assertEqual("Turn M", g.mode)
 
+        g.select(6, 0)
+        self.assertEqual((6, 0), g.selected_cell)
 
+        g.go(0, 0, 6, 0)
+        self.assertEqual(4, g.move_points)
+        self.assertTrue((6, 0) in g.warriors)
+
+        g.attack(6, 0)
+        self.assertEqual(10, g.warriors[(6, 0)].health)
+        self.assertEqual(4, g.warriors[(7, 0)].health)
+        self.assertEqual(6, g.warriors[(7, 1)].health)
+        self.assertEqual(10, g.warriors[(7, 2)].health)
+
+        g.end_turn()
+        self.assertEqual("Turn W", g.mode)
+
+        g.select(7, 0)
+        self.assertEqual((7, 0), g.selected_cell)
+
+        g.attack(7, 0)
+        self.assertEqual(4, g.warriors[(6, 0)].health)
+        self.assertEqual(4, g.warriors[(7, 0)].health)
+        self.assertEqual(6, g.warriors[(7, 1)].health)
+        self.assertEqual(10, g.warriors[(7, 2)].health)
+
+        g.select(7, 1)
+        self.assertEqual((7, 1), g.selected_cell)
 
 
 if __name__ == "__main__":

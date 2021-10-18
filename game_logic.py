@@ -17,7 +17,8 @@ class Warrior:
 
 
 class Game:
-    # TODO Изменить "Turn" на "Move"
+    # TODO Изменить "Turn" на "Move" в значениях поля mode
+    # TODO Изменить "Turn" на "Move" в названиях методов
     DEFAULT_SIZE_X = 8
     DEFAULT_SIZE_Y = 8
     DEFAULT_NUMBER_OF_WARRIORS = {"M": 3, "W": 3}
@@ -87,6 +88,8 @@ class Game:
                 count += 1
         return count
 
+    # TODO Добавить проверку, что клетка, с которой атакуют, является выделенной
+    # TODO Принять решение о том, нужна ли на уровне логики выделенная ячейка или это касается только дизайна
     def attack(self, from_x, from_y):
         attack_cell = (from_x, from_y)
         if (0 <= from_x < self.DEFAULT_SIZE_X and
@@ -100,7 +103,7 @@ class Game:
                     if (0 <= from_x + dx < Game.DEFAULT_SIZE_X and
                             0 <= from_y + dy < Game.DEFAULT_SIZE_Y and
                             victim_cell in self.warriors and
-                            self.warriors[attack_cell] != self.warriors[victim_cell]):
+                            self.warriors[attack_cell].team != self.warriors[victim_cell].team):
                         self.warriors[victim_cell].health -= self.warriors[attack_cell].damage_field[2 - dy][2 + dx]
                         if self.warriors[victim_cell].health <= 0:
                             if self.get_count_warriors(self.warriors[victim_cell].team) == 1:
@@ -112,7 +115,7 @@ class Game:
     def refresh(self, team):
         if team == 'M' or team == 'W':
             self.move_points = self.DEFAULT_MOVE_POINTS
-            for warrior in self.warriors.values:
+            for warrior in self.warriors.values():
                 if warrior.team == team:
                     warrior.number_of_attack = self.DEFAULT_NUMBER_OF_ATTACKS
 
@@ -122,10 +125,10 @@ class Game:
         elif self.get_count_warriors("W") == 0:
             self.mode = "Win M"
         elif self.mode == "Turn M":
-            self.mode == "Turn W"
+            self.mode = "Turn W"
             self.refresh("W")
         elif self.mode == "Turn W":
-            self.mode == "Turn M"
+            self.mode = "Turn M"
             self.refresh("M")
 
 
@@ -147,8 +150,6 @@ if __name__ == "__main__":
     g = Game("Turn M", 10, (0, 0), ws)
     g.print_game_info()
     g.go(0, 0, 6, 0)
-    g.print_game_info()
-    g.add(5, 5, w1)
     g.print_game_info()
     g.attack(6, 0)
     g.print_game_info()
