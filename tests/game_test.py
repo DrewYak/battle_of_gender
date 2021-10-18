@@ -5,7 +5,7 @@ from game_logic import Game, Warrior
 
 class GameTest(TestCase):
     global g
-    g = Game("Arrange", 10, (0, 0), {})
+    g = Game("Arrange", 10, {})
 
     def test_add(self):
         warrior_m_1 = Warrior("M", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
@@ -68,9 +68,6 @@ class GameTest(TestCase):
         g.start("M")
         self.assertEqual("Turn M", g.mode)
 
-        g.select(6, 0)
-        self.assertEqual((6, 0), g.selected_cell)
-
         g.go(0, 0, 6, 0)
         self.assertEqual(4, g.move_points)
         self.assertTrue((6, 0) in g.warriors)
@@ -84,17 +81,11 @@ class GameTest(TestCase):
         g.end_turn()
         self.assertEqual("Turn W", g.mode)
 
-        g.select(7, 0)
-        self.assertEqual((7, 0), g.selected_cell)
-
         g.attack(7, 0)
         self.assertEqual(4, g.warriors[(6, 0)].health)
         self.assertEqual(4, g.warriors[(7, 0)].health)
         self.assertEqual(6, g.warriors[(7, 1)].health)
         self.assertEqual(10, g.warriors[(7, 2)].health)
-
-        g.select(7, 1)
-        self.assertEqual((7, 1), g.selected_cell)
 
 
 if __name__ == "__main__":

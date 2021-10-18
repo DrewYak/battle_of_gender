@@ -25,10 +25,9 @@ class Game:
     DEFAULT_MOVE_POINTS = 10
     DEFAULT_NUMBER_OF_ATTACKS = 1
 
-    def __init__(self, mode, move_points, selected_cell, warriors):
+    def __init__(self, mode, move_points, warriors):
         self.mode = mode
         self.move_points = move_points
-        self.selected_cell = selected_cell
         self.warriors = warriors
 
     def print_game_info(self):
@@ -36,7 +35,6 @@ class Game:
         print("------ Game Info ------")
         print("Mode = {0}".format(self.mode))
         print("Move points = {0}".format(self.move_points))
-        print("Selected cell = {0}".format(self.selected_cell))
         for coordinates, warrior in self.warriors.items():
             print(coordinates, end=' ')
             warrior.print_warrior_info()
@@ -63,10 +61,6 @@ class Game:
         else:
             return -1
 
-    def select(self, x, y):
-        if 0 <= x < self.DEFAULT_SIZE_X and 0 <= y < self.DEFAULT_SIZE_Y:
-            self.selected_cell = (x, y)
-
     def go(self, from_x, from_y, to_x, to_y):
         if (0 <= from_x < self.DEFAULT_SIZE_X and
                 0 <= from_y < self.DEFAULT_SIZE_Y and
@@ -79,7 +73,6 @@ class Game:
             self.warriors[(to_x, to_y)] = w
             del self.warriors[(from_x, from_y)]
             self.move_points -= self.distance(from_x, from_y, to_x, to_y)
-            self.select(to_x, to_y)
 
     def get_count_warriors(self, team):
         count = 0
@@ -88,8 +81,6 @@ class Game:
                 count += 1
         return count
 
-    # TODO Добавить проверку, что клетка, с которой атакуют, является выделенной
-    # TODO Принять решение о том, нужна ли на уровне логики выделенная ячейка или это касается только дизайна
     def attack(self, from_x, from_y):
         attack_cell = (from_x, from_y)
         if (0 <= from_x < self.DEFAULT_SIZE_X and
