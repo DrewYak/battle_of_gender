@@ -1,7 +1,5 @@
-from pygame.tests.test_utils import endian
-
-
 class Warrior:
+    # TODO Сделать ещё 5 DAMAGE_FIELD для оставшихся типов игроков
     DAMAGE_FIELD_M_PAL = [[0, 0, 0, 0, 0],
                           [0, 4, 6, 4, 0],
                           [0, 6, 0, 6, 0],
@@ -19,6 +17,7 @@ class Warrior:
 
 
 class Game:
+    # TODO Изменить "Turn" на "Move"
     DEFAULT_SIZE_X = 8
     DEFAULT_SIZE_Y = 8
     DEFAULT_NUMBER_OF_WARRIORS = {"M": 3, "W": 3}
@@ -48,6 +47,11 @@ class Game:
                 (x, y) not in self.warriors and
                 self.get_count_warriors(warrior.team) < self.DEFAULT_NUMBER_OF_WARRIORS[warrior.team]):
             self.warriors[(x, y)] = warrior
+
+    def start(self, first_move_team):
+        if (first_move_team in ["M", "W"] and
+                self.get_count_warriors("M") * self.get_count_warriors("W") != 0):
+            self.mode = "Turn " + first_move_team
 
     def distance(self, x1, y1, x2, y2):
         if (0 <= x1 < self.DEFAULT_SIZE_X and
