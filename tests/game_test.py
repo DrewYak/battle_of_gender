@@ -9,12 +9,12 @@ class GameTest(TestCase):
 
     def test_add(self):
         warrior_m_1 = Warrior("M", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
-        warrior_m_2 = Warrior("M", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
-        warrior_m_3 = Warrior("M", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
+        warrior_m_2 = Warrior("M", 10, 1, Warrior.DAMAGE_FIELD_M_ARC)
+        warrior_m_3 = Warrior("M", 10, 1, Warrior.DAMAGE_FIELD_M_WIZ)
         warrior_m_4 = Warrior("M", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
-        warrior_w_1 = Warrior("W", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
-        warrior_w_2 = Warrior("W", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
-        warrior_w_3 = Warrior("W", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
+        warrior_w_1 = Warrior("W", 10, 1, Warrior.DAMAGE_FIELD_W_PAL)
+        warrior_w_2 = Warrior("W", 10, 1, Warrior.DAMAGE_FIELD_W_ARC)
+        warrior_w_3 = Warrior("W", 10, 1, Warrior.DAMAGE_FIELD_W_WIZ)
         warrior_w_4 = Warrior("W", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
 
         # Добавляем первого воина-мужчину на клетку (0, 0).
@@ -74,8 +74,8 @@ class GameTest(TestCase):
 
         g.attack(6, 0)
         self.assertEqual(10, g.warriors[(6, 0)].health)
-        self.assertEqual(4, g.warriors[(7, 0)].health)
-        self.assertEqual(6, g.warriors[(7, 1)].health)
+        self.assertEqual(3, g.warriors[(7, 0)].health)
+        self.assertEqual(7, g.warriors[(7, 1)].health)
         self.assertEqual(10, g.warriors[(7, 2)].health)
 
         g.end_turn()
@@ -83,8 +83,8 @@ class GameTest(TestCase):
 
         g.attack(7, 0)
         self.assertEqual(4, g.warriors[(6, 0)].health)
-        self.assertEqual(4, g.warriors[(7, 0)].health)
-        self.assertEqual(6, g.warriors[(7, 1)].health)
+        self.assertEqual(3, g.warriors[(7, 0)].health)
+        self.assertEqual(7, g.warriors[(7, 1)].health)
         self.assertEqual(10, g.warriors[(7, 2)].health)
 
 

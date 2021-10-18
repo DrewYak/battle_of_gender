@@ -1,6 +1,7 @@
 class Warrior:
     # M_PAL = 43   M_ARC = 36   M_WIZ = 40
     # W_PAL = 44   W_ARC = 36   W_WIZ = 48
+    # TODO Может, добавить аптекария, который лечит своих?))
 
     DAMAGE_FIELD_M_PAL = [[0, 0, 0, 0, 0],
                           [0, 3, 7, 3, 0],
