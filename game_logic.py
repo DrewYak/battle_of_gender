@@ -171,7 +171,7 @@ if __name__ == "__main__":
           (7, 1): w5,
           (7, 2): w6}
 
-    g = Game("Turn M", 10, (0, 0), ws)
+    g = Game("Turn M", 10, ws)
     g.print_game_info()
     g.go(0, 0, 6, 0)
     g.print_game_info()

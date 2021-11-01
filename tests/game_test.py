@@ -64,7 +64,7 @@ class GameTest(TestCase):
         self.assertEqual(3, g.get_count_warriors("M"))
         self.assertEqual(3, g.get_count_warriors("W"))
 
-    def test_go(self):
+    def test_all_methods(self):
         g.start("M")
         self.assertEqual("Turn M", g.mode)
 

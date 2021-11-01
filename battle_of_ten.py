@@ -25,54 +25,9 @@ MAX_HEALTH = 10
 
 # endregion
 
-class WarriorWithHealth(arcade.Sprite):
-    def __init__(self, image, scale, max_health):
+class WarriorSprite(arcade.Sprite):
+    def __init__(self, image, scale):
         super().__init__(image, scale)
-        self.max_health = max_health
-        self.cur_health = max_health
-
-    def update(self):
-        if self.new_center_x != self.center_x:
-            self.center_x += self.change_x
-        elif self.new_center_y != self.center_y:
-            self.center_y += self.change_y
-        else:
-            self.change_x = 0
-            self.change_y = 0
-
-    def go_to(self, new_center_x, new_center_y):
-        if self.change_x == 0 and self.change_y == 0 and SHIFT + 50 <= new_center_x <= SHIFT + 750:
-            self.new_center_x = new_center_x
-            self.new_center_y = new_center_y
-
-            dif_x = self.new_center_x - self.center_x
-            dif_y = self.new_center_y - self.center_y
-
-            self.change_x = math.copysign(WARRIOR_MOVEMENT_SPEED, dif_x)
-            self.change_y = math.copysign(WARRIOR_MOVEMENT_SPEED, dif_y)
-
-    def draw_health_number(self):
-        health_string = f"{self.cur_health}"
-        arcade.draw_text(health_string,
-                         start_x=self.center_x + HEALTH_NUMBER_OFFSET_X,
-                         start_y=self.center_y + HEALTH_NUMBER_OFFSET_Y,
-                         font_size=12,
-                         color=arcade.color.BLACK)
-
-    def draw_health_bar(self):
-        if self.cur_health < self.max_health:
-            arcade.draw_rectangle_filled(center_x=self.center_x,
-                                         center_y=self.center_y + HEALTH_BAR_OFFSET_Y,
-                                         width=HEALTH_BAR_WIDTH,
-                                         height=3,
-                                         color=arcade.color.RED)
-
-        health_width = HEALTH_BAR_WIDTH * (self.cur_health / self.max_health)
-        arcade.draw_rectangle_filled(center_x=self.center_x - 0.5 * (HEALTH_BAR_WIDTH - health_width),
-                                     center_y=self.center_y + 45,
-                                     width=health_width,
-                                     height=HEALTH_BAR_HEIGHT,
-                                     color=arcade.color.ASPARAGUS)
 
 
 class InstructionView(arcade.View):
@@ -131,7 +86,7 @@ class GameView(arcade.View):
         self.warrior_list = arcade.SpriteList()
 
         img = "images/T1_P_128.png"
-        warrior_sprite = WarriorWithHealth(img, SPRITE_SCALING_WARRIOR, MAX_HEALTH)
+        warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR)
         warrior_sprite.center_x = SHIFT + 50
         warrior_sprite.center_y = 50
         warrior_sprite.new_center_x = SHIFT + 50
@@ -140,7 +95,7 @@ class GameView(arcade.View):
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         img = "images/T1_A_128.png"
-        warrior_sprite = WarriorWithHealth(img, SPRITE_SCALING_WARRIOR, MAX_HEALTH)
+        warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR)
         warrior_sprite.center_x = SHIFT + 50
         warrior_sprite.center_y = 150
         warrior_sprite.new_center_x = SHIFT + 150
@@ -149,7 +104,7 @@ class GameView(arcade.View):
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         img = "images/T1_W_128.png"
-        warrior_sprite = WarriorWithHealth(img, SPRITE_SCALING_WARRIOR, MAX_HEALTH)
+        warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR)
         warrior_sprite.center_x = SHIFT + 50
         warrior_sprite.center_y = 250
         warrior_sprite.new_center_x = SHIFT + 50
@@ -158,7 +113,7 @@ class GameView(arcade.View):
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         img = "images/T2_P_128.png"
-        warrior_sprite = WarriorWithHealth(img, SPRITE_SCALING_WARRIOR, MAX_HEALTH)
+        warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR)
         warrior_sprite.center_x = SHIFT + 750
         warrior_sprite.center_y = 50
         warrior_sprite.new_center_x = SHIFT + 750
@@ -167,7 +122,7 @@ class GameView(arcade.View):
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         img = "images/T2_A_128.png"
-        warrior_sprite = WarriorWithHealth(img, SPRITE_SCALING_WARRIOR, MAX_HEALTH)
+        warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR)
         warrior_sprite.center_x = SHIFT + 750
         warrior_sprite.center_y = 150
         warrior_sprite.new_center_x = SHIFT + 750
@@ -176,7 +131,7 @@ class GameView(arcade.View):
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         img = "images/T2_W_128.png"
-        warrior_sprite = WarriorWithHealth(img, SPRITE_SCALING_WARRIOR, MAX_HEALTH)
+        warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR)
         warrior_sprite.center_x = SHIFT + 750
         warrior_sprite.center_y = 250
         warrior_sprite.new_center_x = SHIFT + 750
@@ -188,10 +143,6 @@ class GameView(arcade.View):
         arcade.start_render()
         self.scene.draw()
         self.warrior_list.draw()
-
-        for w in self.warrior_list:
-            w.draw_health_number()
-            w.draw_health_bar()
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         if button == arcade.MOUSE_BUTTON_LEFT:
