@@ -2,6 +2,8 @@ import arcade
 import math
 
 # region Константы
+from pygame.display import update
+
 SPRITE_SCALING_CELL = 1.0
 SPRITE_SCALING_WARRIOR = 87 / 128
 SIZE = 8
@@ -28,6 +30,22 @@ MAX_HEALTH = 10
 class WarriorSprite(arcade.Sprite):
     def __init__(self, image, scale):
         super().__init__(image, scale)
+        self.destination_x = self.center_x
+        self.destination_y = self.center_y
+
+    def update(self):
+        if abs(self.center_x - self.destination_x) <= abs(self.change_x):
+            self.center_x = self.destination_x
+            self.change_x = 0
+        else:
+            self.center_x += self.change_x
+
+        if self.change_x == 0:
+            if abs(self.center_y - self.destination_y) <= abs(self.change_y):
+                self.center_y = self.destination_y
+                self.change_y = 0
+            else:
+                self.center_y += self.change_y
 
 
 class InstructionView(arcade.View):
@@ -144,9 +162,27 @@ class GameView(arcade.View):
         self.scene.draw()
         self.warrior_list.draw()
 
+    def get_warrior_sprite_by_coordinates(self, x, y):
+        for warrior_sprite in self.warrior_list:
+            if (warrior_sprite.center_x // 100 == x // 100 and
+                    warrior_sprite.center_y // 100 == y // 100):
+                return warrior_sprite
+        return None
+
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         if button == arcade.MOUSE_BUTTON_LEFT:
-            self.warrior_list[0].go_to(x // 100 * 100 + 50, y // 100 * 100 + 50)
+            if self.warrior_sprite is None:
+                self.warrior_sprite = self.get_warrior_sprite_by_coordinates(x, y)
+            else:
+                normalize_x = x // 100 * 100 + 50
+                normalize_y = y // 100 * 100 + 50
+                if (normalize_x <= SHIFT + SCREEN_WIDTH and
+                        normalize_y <= SCREEN_HEIGHT):
+                    self.warrior_sprite.destination_x = normalize_x
+                    self.warrior_sprite.destination_y = normalize_y
+                    self.warrior_sprite.change_x = int(math.copysign(1.0, self.warrior_sprite.destination_x - self.warrior_sprite.center_x)) * WARRIOR_MOVEMENT_SPEED
+                    self.warrior_sprite.change_y = int(math.copysign(1.0, self.warrior_sprite.destination_y - self.warrior_sprite.center_y)) * WARRIOR_MOVEMENT_SPEED
+                    self.warrior_sprite = None
 
     def on_update(self, delta_time):
         self.warrior_list.update()
