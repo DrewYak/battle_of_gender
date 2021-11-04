@@ -90,13 +90,11 @@ class InstructionView(arcade.View):
 
 class GameView(arcade.View):
     def __init__(self):
-        # super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
         super().__init__()
 
         self.scene = None
         self.g = None
 
-        self.warrior_list = None
         self.selected_warrior_sprite = None
 
         self.window.background_color = (217, 205, 175)
@@ -115,8 +113,6 @@ class GameView(arcade.View):
                 cell_sprite.center_y = 50 + 100 * j
                 self.scene.add_sprite("Cells", cell_sprite)
 
-        self.warrior_list = arcade.SpriteList()
-
         self.g = game_logic.Game("Turn M", 10, {})
 
         warrior = game_logic.Warrior("M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_PAL)
@@ -125,7 +121,6 @@ class GameView(arcade.View):
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
         warrior_sprite.center_x = SHIFT + 50 + 6 * 100
         warrior_sprite.center_y = 50
-        self.warrior_list.append(warrior_sprite)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         warrior = game_logic.Warrior("M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_ARC)
@@ -134,7 +129,6 @@ class GameView(arcade.View):
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
         warrior_sprite.center_x = SHIFT + 50
         warrior_sprite.center_y = 150
-        self.warrior_list.append(warrior_sprite)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         warrior = game_logic.Warrior("M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_WIZ)
@@ -143,7 +137,6 @@ class GameView(arcade.View):
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
         warrior_sprite.center_x = SHIFT + 50
         warrior_sprite.center_y = 250
-        self.warrior_list.append(warrior_sprite)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         warrior = game_logic.Warrior("W", 10, 1, game_logic.Warrior.DAMAGE_FIELD_W_PAL)
@@ -152,7 +145,6 @@ class GameView(arcade.View):
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
         warrior_sprite.center_x = SHIFT + 750
         warrior_sprite.center_y = 50
-        self.warrior_list.append(warrior_sprite)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         warrior = game_logic.Warrior("W", 10, 1, game_logic.Warrior.DAMAGE_FIELD_W_ARC)
@@ -161,7 +153,6 @@ class GameView(arcade.View):
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
         warrior_sprite.center_x = SHIFT + 750
         warrior_sprite.center_y = 150
-        self.warrior_list.append(warrior_sprite)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         warrior = game_logic.Warrior("W", 10, 1, game_logic.Warrior.DAMAGE_FIELD_W_WIZ)
@@ -170,18 +161,16 @@ class GameView(arcade.View):
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
         warrior_sprite.center_x = SHIFT + 750
         warrior_sprite.center_y = 250
-        self.warrior_list.append(warrior_sprite)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
     def on_draw(self):
         arcade.start_render()
         self.scene.draw()
-        self.warrior_list.draw()
-        for ws in self.warrior_list:
+        for ws in self.scene.get_sprite_list("Warriors"):
             ws.draw_health_number()
 
     def get_warrior_sprite_by_coordinates(self, x, y):
-        for warrior_sprite in self.warrior_list:
+        for warrior_sprite in self.scene.get_sprite_list("Warriors"):
             if (warrior_sprite.center_x // 100 == x // 100 and
                     warrior_sprite.center_y // 100 == y // 100):
                 return warrior_sprite
@@ -213,11 +202,11 @@ class GameView(arcade.View):
             self.g.attack(super_normalize_x, super_normalize_y)
 
     def on_update(self, delta_time):
-        self.warrior_list.update()
+        self.scene.update()
 
-        if self.warrior_list[0].center_x == 750 + SHIFT:
-            view = GameOverView()
-            self.window.show_view(view)
+        # if self.warrior_list[0].center_x == 750 + SHIFT:
+        #     view = GameOverView()
+        #     self.window.show_view(view)
 
 
 class GameOverView(arcade.View):
