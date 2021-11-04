@@ -35,7 +35,16 @@ class WarriorSprite(arcade.Sprite):
         self.warrior = warrior
 
     def draw_health_number(self):
-        pass
+        health_string = f"{self.warrior.health}"
+        arcade.draw_text(health_string,
+                         start_x=self.center_x + 25,
+                         start_y=self.center_y + 30,
+                         font_size=14,
+                         color=arcade.color.BROWN_NOSE,
+                         width=20,
+                         align="right",
+                         bold=True,
+                         font_name=('Kenney Future Narrow', 'arial'))
 
     def update(self):
         if abs(self.center_x - self.destination_x) <= abs(self.change_x):
@@ -179,6 +188,8 @@ class GameView(arcade.View):
         arcade.start_render()
         self.scene.draw()
         self.warrior_list.draw()
+        for ws in self.warrior_list:
+            ws.draw_health_number()
 
     def get_warrior_sprite_by_coordinates(self, x, y):
         for warrior_sprite in self.warrior_list:
@@ -198,8 +209,10 @@ class GameView(arcade.View):
                         normalize_y <= SCREEN_HEIGHT):
                     self.selected_warrior_sprite.destination_x = normalize_x
                     self.selected_warrior_sprite.destination_y = normalize_y
-                    self.selected_warrior_sprite.change_x = int(math.copysign(1.0, self.selected_warrior_sprite.destination_x - self.selected_warrior_sprite.center_x)) * WARRIOR_MOVEMENT_SPEED
-                    self.selected_warrior_sprite.change_y = int(math.copysign(1.0, self.selected_warrior_sprite.destination_y - self.selected_warrior_sprite.center_y)) * WARRIOR_MOVEMENT_SPEED
+                    self.selected_warrior_sprite.change_x = int(math.copysign(1.0,
+                                                                              self.selected_warrior_sprite.destination_x - self.selected_warrior_sprite.center_x)) * WARRIOR_MOVEMENT_SPEED
+                    self.selected_warrior_sprite.change_y = int(math.copysign(1.0,
+                                                                              self.selected_warrior_sprite.destination_y - self.selected_warrior_sprite.center_y)) * WARRIOR_MOVEMENT_SPEED
                 self.selected_warrior_sprite = None
 
     def on_update(self, delta_time):
