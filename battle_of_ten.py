@@ -37,7 +37,7 @@ class WarriorSprite(arcade.Sprite):
     def draw_health_number(self):
         health_string = f"{self.warrior.health}"
         arcade.draw_text(health_string,
-                         start_x=self.center_x + 25,
+                         start_x=self.center_x + 23,
                          start_y=self.center_y + 30,
                          font_size=14,
                          color=arcade.color.BROWN_NOSE,
@@ -94,6 +94,7 @@ class GameView(arcade.View):
         super().__init__()
 
         self.scene = None
+        self.g = None
 
         self.warrior_list = None
         self.selected_warrior_sprite = None
@@ -116,71 +117,59 @@ class GameView(arcade.View):
 
         self.warrior_list = arcade.SpriteList()
 
-        g = game_logic.Game("Turn M", 10, {})
+        self.g = game_logic.Game("Turn M", 10, {})
 
         warrior = game_logic.Warrior("M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_PAL)
-        g.add(0, 0, warrior)
+        self.g.add(6, 0, warrior)
         img = "images/T1_P_128.png"
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
-        warrior_sprite.center_x = SHIFT + 50
+        warrior_sprite.center_x = SHIFT + 50 + 6 * 100
         warrior_sprite.center_y = 50
-        warrior_sprite.new_center_x = SHIFT + 50
-        warrior_sprite.new_center_y = 50
         self.warrior_list.append(warrior_sprite)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         warrior = game_logic.Warrior("M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_ARC)
-        g.add(0, 1, warrior)
+        self.g.add(0, 1, warrior)
         img = "images/T1_A_128.png"
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
         warrior_sprite.center_x = SHIFT + 50
         warrior_sprite.center_y = 150
-        warrior_sprite.new_center_x = SHIFT + 150
-        warrior_sprite.new_center_y = 150
         self.warrior_list.append(warrior_sprite)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         warrior = game_logic.Warrior("M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_WIZ)
-        g.add(0, 2, warrior)
+        self.g.add(0, 2, warrior)
         img = "images/T1_W_128.png"
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
         warrior_sprite.center_x = SHIFT + 50
         warrior_sprite.center_y = 250
-        warrior_sprite.new_center_x = SHIFT + 50
-        warrior_sprite.new_center_y = 250
         self.warrior_list.append(warrior_sprite)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         warrior = game_logic.Warrior("W", 10, 1, game_logic.Warrior.DAMAGE_FIELD_W_PAL)
-        g.add(7, 0, warrior)
+        self.g.add(7, 0, warrior)
         img = "images/T2_P_128.png"
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
         warrior_sprite.center_x = SHIFT + 750
         warrior_sprite.center_y = 50
-        warrior_sprite.new_center_x = SHIFT + 750
-        warrior_sprite.new_center_y = 50
         self.warrior_list.append(warrior_sprite)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         warrior = game_logic.Warrior("W", 10, 1, game_logic.Warrior.DAMAGE_FIELD_W_ARC)
-        g.add(7, 1, warrior)
+        self.g.add(7, 1, warrior)
         img = "images/T2_A_128.png"
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
         warrior_sprite.center_x = SHIFT + 750
         warrior_sprite.center_y = 150
-        warrior_sprite.new_center_x = SHIFT + 750
-        warrior_sprite.new_center_y = 150
         self.warrior_list.append(warrior_sprite)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         warrior = game_logic.Warrior("W", 10, 1, game_logic.Warrior.DAMAGE_FIELD_W_WIZ)
-        g.add(7, 2, warrior)
+        self.g.add(7, 2, warrior)
         img = "images/T2_W_128.png"
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
         warrior_sprite.center_x = SHIFT + 750
         warrior_sprite.center_y = 250
-        warrior_sprite.new_center_x = SHIFT + 750
-        warrior_sprite.new_center_y = 50
         self.warrior_list.append(warrior_sprite)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
@@ -199,6 +188,9 @@ class GameView(arcade.View):
         return None
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
+        super_normalize_x = (x - SHIFT) // 100
+        super_normalize_y = y // 100
+
         if button == arcade.MOUSE_BUTTON_LEFT:
             if self.selected_warrior_sprite is None:
                 self.selected_warrior_sprite = self.get_warrior_sprite_by_coordinates(x, y)
@@ -207,6 +199,8 @@ class GameView(arcade.View):
                 normalize_y = y // 100 * 100 + 50
                 if (SHIFT <= normalize_x <= SHIFT + SCREEN_WIDTH and
                         normalize_y <= SCREEN_HEIGHT):
+                    # TODO Надо прописать, как ходит воин, связав логику и графику. Возможно, следует все координаты
+                    #  приводить к super_normalize_x.
                     self.selected_warrior_sprite.destination_x = normalize_x
                     self.selected_warrior_sprite.destination_y = normalize_y
                     self.selected_warrior_sprite.change_x = int(math.copysign(1.0,
@@ -214,6 +208,9 @@ class GameView(arcade.View):
                     self.selected_warrior_sprite.change_y = int(math.copysign(1.0,
                                                                               self.selected_warrior_sprite.destination_y - self.selected_warrior_sprite.center_y)) * WARRIOR_MOVEMENT_SPEED
                 self.selected_warrior_sprite = None
+
+        if button == arcade.MOUSE_BUTTON_RIGHT:
+            self.g.attack(super_normalize_x, super_normalize_y)
 
     def on_update(self, delta_time):
         self.warrior_list.update()
