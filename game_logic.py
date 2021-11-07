@@ -119,7 +119,8 @@ class Game:
         if (0 <= from_x < self.DEFAULT_SIZE_X and
                 0 <= from_y < self.DEFAULT_SIZE_Y and
                 attack_cell in self.warriors and
-                "Turn " + self.warriors[attack_cell].team == self.mode):
+                "Turn " + self.warriors[attack_cell].team == self.mode and
+                self.warriors[attack_cell].number_of_attack > 0):
             self.warriors[attack_cell].number_of_attack -= 1
             for dx in range(-2, 3, 1):
                 for dy in range(-2, 3, 1):

@@ -34,6 +34,12 @@ class WarriorSprite(arcade.Sprite):
         self.destination_y = self.center_y
         self.warrior = warrior
 
+    def get_norm_x(self):
+        return (self.center_x - SHIFT) // 100
+
+    def get_norm_y(self):
+        return self.center_y // 100
+
     def draw_health_number(self):
         health_string = f"{self.warrior.health}"
         arcade.draw_text(health_string,
@@ -177,21 +183,26 @@ class GameView(arcade.View):
         return None
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
-        super_normalize_x = (x - SHIFT) // 100
-        super_normalize_y = y // 100
+        norm_x = (x - SHIFT) // 100
+        norm_y = y // 100
 
         if button == arcade.MOUSE_BUTTON_LEFT:
             if self.selected_warrior_sprite is None:
                 self.selected_warrior_sprite = self.get_warrior_sprite_by_coordinates(x, y)
             else:
-                normalize_x = x // 100 * 100 + 50
-                normalize_y = y // 100 * 100 + 50
-                if (SHIFT <= normalize_x <= SHIFT + SCREEN_WIDTH and
-                        normalize_y <= SCREEN_HEIGHT):
-                    # TODO Надо прописать, как ходит воин, связав логику и графику. Возможно, следует все координаты
-                    #  приводить к super_normalize_x.
-                    self.selected_warrior_sprite.destination_x = normalize_x
-                    self.selected_warrior_sprite.destination_y = normalize_y
+                draw_x = x // 100 * 100 + 50
+                draw_y = y // 100 * 100 + 50
+                if (SHIFT <= draw_x <= SHIFT + SCREEN_WIDTH and
+                        (0 <= draw_y <= SCREEN_HEIGHT)):
+                    from_x = self.selected_warrior_sprite.get_norm_x()
+                    from_y = self.selected_warrior_sprite.get_norm_y()
+                    to_x = norm_x
+                    to_y = norm_y
+
+                    self.g.go(from_x, from_y, to_x, to_y)
+
+                    self.selected_warrior_sprite.destination_x = draw_x
+                    self.selected_warrior_sprite.destination_y = draw_y
                     self.selected_warrior_sprite.change_x = int(math.copysign(1.0,
                                                                               self.selected_warrior_sprite.destination_x - self.selected_warrior_sprite.center_x)) * WARRIOR_MOVEMENT_SPEED
                     self.selected_warrior_sprite.change_y = int(math.copysign(1.0,
@@ -199,12 +210,11 @@ class GameView(arcade.View):
                 self.selected_warrior_sprite = None
 
         if button == arcade.MOUSE_BUTTON_RIGHT:
-            self.g.attack(super_normalize_x, super_normalize_y)
+            self.g.attack(norm_x, norm_y)
 
     def on_update(self, delta_time):
         self.scene.update()
 
-        # if self.warrior_list[0].center_x == 750 + SHIFT:
         #     view = GameOverView()
         #     self.window.show_view(view)
 
