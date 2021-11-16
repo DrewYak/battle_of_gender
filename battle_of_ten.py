@@ -1,4 +1,5 @@
 import arcade
+import arcade.gui
 import math
 import game_logic
 
@@ -105,6 +106,22 @@ class GameView(arcade.View):
 
         self.window.background_color = (217, 205, 175)
 
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+
+        self.l_box = arcade.gui.UIBoxLayout()
+        ui_text_label = arcade.gui.UITextArea(text="Hello",
+                                              width=20,
+                                              height=150,
+                                              font_size=24,
+                                              font_name="Kenney Future")
+        ui_text_label.fit_content()
+        self.l_box.add(ui_text_label.with_space_around(bottom=0))
+
+        self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="left",
+                                                   anchor_y="top",
+                                                   child=self.l_box))
+
     def setup(self):
         self.scene = arcade.Scene()
 
@@ -174,6 +191,8 @@ class GameView(arcade.View):
         self.scene.draw()
         for ws in self.scene.get_sprite_list("Warriors"):
             ws.draw_health_number()
+
+        self.manager.draw()
 
     def get_warrior_sprite_by_coordinates(self, x, y):
         for warrior_sprite in self.scene.get_sprite_list("Warriors"):
