@@ -107,6 +107,12 @@ class Game:
             del self.warriors[(from_x, from_y)]
             self.move_points -= self.distance(from_x, from_y, to_x, to_y)
 
+    def get_norm_coordinates_by_warrior(self, warrior):
+        for c, w in self.warriors.items():
+            if w == warrior:
+                return c
+        return  None
+
     def get_count_warriors(self, team):
         count = 0
         for warrior in self.warriors.values():

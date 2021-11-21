@@ -106,21 +106,21 @@ class GameView(arcade.View):
 
         self.window.background_color = (217, 205, 175)
 
-        self.manager = arcade.gui.UIManager()
-        self.manager.enable()
-
-        self.l_box = arcade.gui.UIBoxLayout()
-        ui_text_label = arcade.gui.UITextArea(text="Hello",
-                                              width=20,
-                                              height=150,
-                                              font_size=24,
-                                              font_name="Kenney Future")
-        ui_text_label.fit_content()
-        self.l_box.add(ui_text_label.with_space_around(bottom=0))
-
-        self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="left",
-                                                   anchor_y="top",
-                                                   child=self.l_box))
+        # self.manager = arcade.gui.UIManager()
+        # self.manager.enable()
+        #
+        # self.l_box = arcade.gui.UIBoxLayout()
+        # ui_text_label = arcade.gui.UITextArea(text="Hello",
+        #                                       width=20,
+        #                                       height=150,
+        #                                       font_size=24,
+        #                                       font_name="Kenney Future")
+        # ui_text_label.fit_content()
+        # self.l_box.add(ui_text_label.with_space_around(bottom=0))
+        #
+        # self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="left",
+        #                                            anchor_y="top",
+        #                                            child=self.l_box))
 
     def setup(self):
         self.scene = arcade.Scene()
@@ -192,7 +192,22 @@ class GameView(arcade.View):
         for ws in self.scene.get_sprite_list("Warriors"):
             ws.draw_health_number()
 
-        self.manager.draw()
+        text_mode = f"{self.g.mode}"
+        arcade.draw_text(text_mode,
+                         10,
+                         SCREEN_WIDTH - 30,
+                         arcade.color.WHITE,
+                         18)
+
+        text_move_points = f"{self.g.move_points}"
+        arcade.draw_text(text_move_points,
+                         10,
+                         SCREEN_WIDTH - 50,
+                         arcade.color.WHITE,
+                         18)
+
+
+        # self.manager.draw()
 
     def get_warrior_sprite_by_coordinates(self, x, y):
         for warrior_sprite in self.scene.get_sprite_list("Warriors"):
@@ -220,8 +235,10 @@ class GameView(arcade.View):
 
                     self.g.go(from_x, from_y, to_x, to_y)
 
-                    self.selected_warrior_sprite.destination_x = draw_x
-                    self.selected_warrior_sprite.destination_y = draw_y
+                    # self.selected_warrior_sprite.destination_x = draw_x
+                    # self.selected_warrior_sprite.destination_y = draw_y
+                    self.selected_warrior_sprite.destination_x = self.g.get_norm_coordinates_by_warrior(self.selected_warrior_sprite.warrior)[0] * 100 + SHIFT + 50
+                    self.selected_warrior_sprite.destination_y = self.g.get_norm_coordinates_by_warrior(self.selected_warrior_sprite.warrior)[1] * 100 + 50
                     self.selected_warrior_sprite.change_x = int(math.copysign(1.0,
                                                                               self.selected_warrior_sprite.destination_x - self.selected_warrior_sprite.center_x)) * WARRIOR_MOVEMENT_SPEED
                     self.selected_warrior_sprite.change_y = int(math.copysign(1.0,
