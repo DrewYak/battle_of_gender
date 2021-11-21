@@ -106,21 +106,19 @@ class GameView(arcade.View):
 
         self.window.background_color = (217, 205, 175)
 
-        # self.manager = arcade.gui.UIManager()
-        # self.manager.enable()
-        #
-        # self.l_box = arcade.gui.UIBoxLayout()
-        # ui_text_label = arcade.gui.UITextArea(text="Hello",
-        #                                       width=20,
-        #                                       height=150,
-        #                                       font_size=24,
-        #                                       font_name="Kenney Future")
-        # ui_text_label.fit_content()
-        # self.l_box.add(ui_text_label.with_space_around(bottom=0))
-        #
-        # self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="left",
-        #                                            anchor_y="top",
-        #                                            child=self.l_box))
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+
+        self.l_box = arcade.gui.UIBoxLayout()
+
+        left_button_end_turn = arcade.gui.UIFlatButton(text="Завершить ход",
+                                                       width=SHIFT / 2)
+        left_button_end_turn.on_click = self.on_click_left_end_turn
+        self.l_box.add(left_button_end_turn.with_space_around(80,20,20,20))
+
+        self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="left",
+                                                   anchor_y="top",
+                                                   child=self.l_box,))
 
     def setup(self):
         self.scene = arcade.Scene()
@@ -186,6 +184,10 @@ class GameView(arcade.View):
         warrior_sprite.center_y = 250
         self.scene.add_sprite("Warriors", warrior_sprite)
 
+    def on_click_left_end_turn(self, event):
+        self.g.end_turn()
+
+
     def on_draw(self):
         arcade.start_render()
         self.scene.draw()
@@ -206,8 +208,7 @@ class GameView(arcade.View):
                          arcade.color.WHITE,
                          18)
 
-
-        # self.manager.draw()
+        self.manager.draw()
 
     def get_warrior_sprite_by_coordinates(self, x, y):
         for warrior_sprite in self.scene.get_sprite_list("Warriors"):
