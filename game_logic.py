@@ -39,11 +39,13 @@ class Warrior:
                           [2, 2, 2, 2, 2],
                           [2, 2, 2, 2, 2]]
 
-    def __init__(self, team, health, number_of_attack, damage_field):
+    def __init__(self, x, y, team, health, number_of_attack, damage_field):
         self.team = team
         self.health = health
         self.number_of_attack = number_of_attack
         self.damage_field = damage_field
+        self.x = x
+        self.y = y
 
     def print_warrior_info(self):
         print(self.team, self.health, self.number_of_attack)
@@ -73,12 +75,8 @@ class Game:
             warrior.print_warrior_info()
         print("-----------------------")
 
-    def add(self, x, y, warrior):
-        if (0 <= x < self.DEFAULT_SIZE_X and
-                0 <= y < self.DEFAULT_SIZE_Y and
-                (x, y) not in self.warriors and
-                self.get_count_warriors(warrior.team) < self.DEFAULT_NUMBER_OF_WARRIORS[warrior.team]):
-            self.warriors[(x, y)] = warrior
+    def add_warrior(self, warrior):
+        self.warriors.append(warrior)
 
     def start(self, first_move_team):
         if (first_move_team in ["M", "W"] and
@@ -101,7 +99,7 @@ class Game:
                 0 <= to_y < self.DEFAULT_SIZE_Y and
                 (from_x, from_y) in self.warriors and
                 (to_x, to_y) not in self.warriors and
-                self.distance(from_x, from_y, to_x, to_y) <= self.move_points):
+                0 <= self.distance(from_x, from_y, to_x, to_y) <= self.move_points):
             w = self.warriors[(from_x, from_y)]
             self.warriors[(to_x, to_y)] = w
             del self.warriors[(from_x, from_y)]
@@ -162,19 +160,14 @@ class Game:
 
 
 if __name__ == "__main__":
-    w1 = Warrior("M", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
-    w2 = Warrior("M", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
-    w3 = Warrior("M", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
-    w4 = Warrior("W", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
-    w5 = Warrior("W", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
-    w6 = Warrior("W", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
+    w1 = Warrior(0, 0, "M", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
+    w2 = Warrior(0, 1, "M", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
+    w3 = Warrior(0, 2, "M", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
+    w4 = Warrior(7, 0, "W", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
+    w5 = Warrior(7, 1, "W", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
+    w6 = Warrior(7, 2,"W", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
 
-    ws = {(0, 0): w1,
-          (0, 1): w2,
-          (0, 2): w3,
-          (7, 0): w4,
-          (7, 1): w5,
-          (7, 2): w6}
+    ws = [w1, w2, w3, w4, w5, w6]
 
     g = Game("Turn M", 10, ws)
     g.print_game_info()
