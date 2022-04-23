@@ -133,11 +133,10 @@ class GameView(arcade.View):
         self.scene.add_sprite_list("Warriors")
 
         img = "images/cell.png"
-        for i in range(SIZE):
-            for j in range(SIZE):
+        for x in range(SIZE):
+            for y in range(SIZE):
                 cell_sprite = arcade.Sprite(img, SPRITE_SCALING_CELL)
-                cell_sprite.center_x = SHIFT + 50 + 100 * i
-                cell_sprite.center_y = 50 + 100 * j
+                (cell_sprite.center_x, cell_sprite.center_y) = to_draw_coord(x, y)
                 self.scene.add_sprite("Cells", cell_sprite)
 
         self.g = game_logic.Game("Turn M", 10, [])
@@ -147,7 +146,7 @@ class GameView(arcade.View):
         warrior_sprite = WarriorSprite("images/T1_P_128.png", SPRITE_SCALING_WARRIOR, warrior)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
-        warrior = game_logic.Warrior(0, 1, "M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_ARC)
+        warrior = game_logic.Warrior(6, 1, "M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_ARC)
         self.g.add_warrior(warrior)
         warrior_sprite = WarriorSprite("images/T1_A_128.png", SPRITE_SCALING_WARRIOR, warrior)
         self.scene.add_sprite("Warriors", warrior_sprite)
@@ -205,15 +204,13 @@ class GameView(arcade.View):
         return None
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
-        norm_x = (x - SHIFT) // 100
-        norm_y = y // 100
+        (norm_x, norm_y) = to_norm_coord(x, y)
 
         if button == arcade.MOUSE_BUTTON_LEFT:
             if self.selected_warrior_sprite is None:
                 self.selected_warrior_sprite = self.get_warrior_sprite_by_coordinates(x, y)
             else:
-                draw_x = norm_x * 100 + 50
-                draw_y = norm_y * 100 + 50
+                (draw_x, draw_y) = to_draw_coord(norm_x, norm_y)
                 if (SHIFT <= draw_x <= SHIFT + SCREEN_WIDTH and
                         (0 <= draw_y <= SCREEN_HEIGHT)):
                     from_x = self.selected_warrior_sprite.get_norm_x()
@@ -223,12 +220,8 @@ class GameView(arcade.View):
 
                     self.g.go(from_x, from_y, to_x, to_y)
 
-                    # self.selected_warrior_sprite.destination_x = draw_x
-                    # self.selected_warrior_sprite.destination_y = draw_y
                     self.selected_warrior_sprite.destination_x = draw_x
-                    # self.g.get_norm_coordinates_by_warrior(self.selected_warrior_sprite.warrior)[0] * 100 + SHIFT + 50
                     self.selected_warrior_sprite.destination_y = draw_y
-                    # self.g.get_norm_coordinates_by_warrior(self.selected_warrior_sprite.warrior)[1] * 100 + 50
                     self.selected_warrior_sprite.change_x = int(math.copysign(1.0,
                                                                               self.selected_warrior_sprite.destination_x - self.selected_warrior_sprite.center_x)) * WARRIOR_MOVEMENT_SPEED
                     self.selected_warrior_sprite.change_y = int(math.copysign(1.0,
@@ -241,9 +234,6 @@ class GameView(arcade.View):
 
     def on_update(self, delta_time):
         self.scene.update()
-
-        #     view = GameOverView()
-        #     self.window.show_view(view)
 
 
 class GameOverView(arcade.View):

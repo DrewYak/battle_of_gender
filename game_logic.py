@@ -92,18 +92,22 @@ class Game:
         else:
             return -1
 
-    def go(self, from_x, from_y, to_x, to_y):
-        if (0 <= from_x < self.DEFAULT_SIZE_X and
-                0 <= from_y < self.DEFAULT_SIZE_Y and
-                0 <= to_x < self.DEFAULT_SIZE_X and
-                0 <= to_y < self.DEFAULT_SIZE_Y and
-                (from_x, from_y) in self.warriors and
-                (to_x, to_y) not in self.warriors and
-                0 <= self.distance(from_x, from_y, to_x, to_y) <= self.move_points):
-            w = self.warriors[(from_x, from_y)]
-            self.warriors[(to_x, to_y)] = w
-            del self.warriors[(from_x, from_y)]
-            self.move_points -= self.distance(from_x, from_y, to_x, to_y)
+    def get_warrior_by_norm_coordinates(self, norm_x, norm_y):
+        for w in self.warriors:
+            if (w.x == norm_x) and (w.y == norm_y):
+                return w
+
+    def go(self, from_norm_x, from_norm_y, to_norm_x, to_norm_y):
+        w = self.get_warrior_by_norm_coordinates(from_norm_x, from_norm_y)
+        if all([0 <= from_norm_x < self.DEFAULT_SIZE_X,
+                0 <= from_norm_y < self.DEFAULT_SIZE_Y,
+                0 <= to_norm_x < self.DEFAULT_SIZE_X,
+                0 <= to_norm_y < self.DEFAULT_SIZE_Y,
+                w is not None,
+                self.get_warrior_by_norm_coordinates(to_norm_x, to_norm_y) is None,
+                0 <= self.distance(from_norm_x, from_norm_y, to_norm_x, to_norm_y) <= self.move_points]):
+            (w.x, w.y) = (to_norm_x, to_norm_y)
+            self.move_points -= self.distance(from_norm_x, from_norm_y, to_norm_x, to_norm_y)
 
     def get_norm_coordinates_by_warrior(self, warrior):
         for c, w in self.warriors.items():
@@ -165,7 +169,7 @@ if __name__ == "__main__":
     w3 = Warrior(0, 2, "M", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
     w4 = Warrior(7, 0, "W", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
     w5 = Warrior(7, 1, "W", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
-    w6 = Warrior(7, 2,"W", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
+    w6 = Warrior(7, 2, "W", 10, 1, Warrior.DAMAGE_FIELD_M_PAL)
 
     ws = [w1, w2, w3, w4, w5, w6]
 
