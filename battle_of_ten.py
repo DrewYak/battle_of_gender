@@ -25,8 +25,8 @@ HEALTH_NUMBER_OFFSET_Y = 28
 
 MAX_HEALTH = 10
 
-
 # endregion
+
 
 class WarriorSprite(arcade.Sprite):
     def __init__(self, image, scale, warrior):
@@ -34,6 +34,9 @@ class WarriorSprite(arcade.Sprite):
         self.destination_x = self.center_x
         self.destination_y = self.center_y
         self.warrior = warrior
+        # Наверное, warrior должен знать свои кординаты, а не только игра.
+        # self.center_x = 0 * 100 + SHIFT + 50;
+        # self.center_y = 0 * 100 + 50;
 
     def get_norm_x(self):
         return (self.center_x - SHIFT) // 100
@@ -114,11 +117,11 @@ class GameView(arcade.View):
         left_button_end_turn = arcade.gui.UIFlatButton(text="Завершить ход",
                                                        width=SHIFT / 2)
         left_button_end_turn.on_click = self.on_click_left_end_turn
-        self.l_box.add(left_button_end_turn.with_space_around(80,20,20,20))
+        self.l_box.add(left_button_end_turn.with_space_around(80, 20, 20, 20))
 
         self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="left",
                                                    anchor_y="top",
-                                                   child=self.l_box,))
+                                                   child=self.l_box, ))
 
     def setup(self):
         self.scene = arcade.Scene()
@@ -137,7 +140,7 @@ class GameView(arcade.View):
         self.g = game_logic.Game("Turn M", 10, {})
 
         warrior = game_logic.Warrior("M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_PAL)
-        self.g.add(6, 0, warrior)
+        self.g.add(0, 2, warrior)
         img = "images/T1_P_128.png"
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
         warrior_sprite.center_x = SHIFT + 50 + 6 * 100
@@ -145,7 +148,7 @@ class GameView(arcade.View):
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         warrior = game_logic.Warrior("M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_ARC)
-        self.g.add(0, 1, warrior)
+        self.g.add(2, 0, warrior)
         img = "images/T1_A_128.png"
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
         warrior_sprite.center_x = SHIFT + 50
@@ -153,7 +156,7 @@ class GameView(arcade.View):
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         warrior = game_logic.Warrior("M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_WIZ)
-        self.g.add(0, 2, warrior)
+        self.g.add(0, 0, warrior)
         img = "images/T1_W_128.png"
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
         warrior_sprite.center_x = SHIFT + 50
@@ -161,7 +164,7 @@ class GameView(arcade.View):
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         warrior = game_logic.Warrior("W", 10, 1, game_logic.Warrior.DAMAGE_FIELD_W_PAL)
-        self.g.add(7, 0, warrior)
+        self.g.add(7, 5, warrior)
         img = "images/T2_P_128.png"
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
         warrior_sprite.center_x = SHIFT + 750
@@ -169,7 +172,7 @@ class GameView(arcade.View):
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         warrior = game_logic.Warrior("W", 10, 1, game_logic.Warrior.DAMAGE_FIELD_W_ARC)
-        self.g.add(7, 1, warrior)
+        self.g.add(5, 7, warrior)
         img = "images/T2_A_128.png"
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
         warrior_sprite.center_x = SHIFT + 750
@@ -177,7 +180,7 @@ class GameView(arcade.View):
         self.scene.add_sprite("Warriors", warrior_sprite)
 
         warrior = game_logic.Warrior("W", 10, 1, game_logic.Warrior.DAMAGE_FIELD_W_WIZ)
-        self.g.add(7, 2, warrior)
+        self.g.add(7, 7, warrior)
         img = "images/T2_W_128.png"
         warrior_sprite = WarriorSprite(img, SPRITE_SCALING_WARRIOR, warrior)
         warrior_sprite.center_x = SHIFT + 750
@@ -186,7 +189,6 @@ class GameView(arcade.View):
 
     def on_click_left_end_turn(self, event):
         self.g.end_turn()
-
 
     def on_draw(self):
         arcade.start_render()
@@ -238,8 +240,10 @@ class GameView(arcade.View):
 
                     # self.selected_warrior_sprite.destination_x = draw_x
                     # self.selected_warrior_sprite.destination_y = draw_y
-                    self.selected_warrior_sprite.destination_x = self.g.get_norm_coordinates_by_warrior(self.selected_warrior_sprite.warrior)[0] * 100 + SHIFT + 50
-                    self.selected_warrior_sprite.destination_y = self.g.get_norm_coordinates_by_warrior(self.selected_warrior_sprite.warrior)[1] * 100 + 50
+                    self.selected_warrior_sprite.destination_x = \
+                    self.g.get_norm_coordinates_by_warrior(self.selected_warrior_sprite.warrior)[0] * 100 + SHIFT + 50
+                    self.selected_warrior_sprite.destination_y = \
+                    self.g.get_norm_coordinates_by_warrior(self.selected_warrior_sprite.warrior)[1] * 100 + 50
                     self.selected_warrior_sprite.change_x = int(math.copysign(1.0,
                                                                               self.selected_warrior_sprite.destination_x - self.selected_warrior_sprite.center_x)) * WARRIOR_MOVEMENT_SPEED
                     self.selected_warrior_sprite.change_y = int(math.copysign(1.0,

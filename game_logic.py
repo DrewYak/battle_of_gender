@@ -111,7 +111,7 @@ class Game:
         for c, w in self.warriors.items():
             if w == warrior:
                 return c
-        return  None
+        return None
 
     def get_count_warriors(self, team):
         count = 0
@@ -137,11 +137,9 @@ class Game:
                             self.warriors[attack_cell].team != self.warriors[victim_cell].team):
                         self.warriors[victim_cell].health -= self.warriors[attack_cell].damage_field[2 - dy][2 + dx]
                         if self.warriors[victim_cell].health <= 0:
-                            if self.get_count_warriors(self.warriors[victim_cell].team) == 1:
-                                del self.warriors[victim_cell]
+                            del self.warriors[victim_cell]
+                            if self.get_count_warriors(self.warriors[victim_cell].team) == 0:
                                 self.mode = "Win " + self.warriors[attack_cell].team
-                            else:
-                                del self.warriors[victim_cell]
 
     def refresh(self, team):
         if team == 'M' or team == 'W':
