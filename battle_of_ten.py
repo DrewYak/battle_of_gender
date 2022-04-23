@@ -172,7 +172,7 @@ class GameView(arcade.View):
         self.scene.add_sprite("Warriors", warrior_sprite)
 
     def on_click_left_end_turn(self, event):
-        self.g.end_turn()
+        self.g.complete_move()
 
     def on_draw(self):
         arcade.start_render()

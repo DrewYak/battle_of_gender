@@ -70,9 +70,9 @@ class Game:
         print("------ Game Info ------")
         print("Mode = {0}".format(self.mode))
         print("Move points = {0}".format(self.move_points))
-        for coordinates, warrior in self.warriors.items():
-            print(coordinates, end=' ')
-            warrior.print_warrior_info()
+        for w in self.warriors:
+            print(w.x, w.y, end=' ')
+            w.print_warrior_info()
         print("-----------------------")
 
     def add_warrior(self, warrior):
@@ -109,15 +109,9 @@ class Game:
             (w.x, w.y) = (to_norm_x, to_norm_y)
             self.move_points -= self.distance(from_norm_x, from_norm_y, to_norm_x, to_norm_y)
 
-    def get_norm_coordinates_by_warrior(self, warrior):
-        for c, w in self.warriors.items():
-            if w == warrior:
-                return c
-        return None
-
     def get_count_warriors(self, team):
         count = 0
-        for warrior in self.warriors.values():
+        for warrior in self.warriors:
             if warrior.team == team:
                 count += 1
         return count
@@ -150,7 +144,7 @@ class Game:
                 if warrior.team == team:
                     warrior.number_of_attack = self.DEFAULT_NUMBER_OF_ATTACKS
 
-    def end_turn(self):
+    def complete_move(self):
         if self.get_count_warriors("M") == 0:
             self.mode = "Win W"
         elif self.get_count_warriors("W") == 0:

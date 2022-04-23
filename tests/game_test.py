@@ -78,7 +78,7 @@ class GameTest(TestCase):
         self.assertEqual(7, g.warriors[(7, 1)].health)
         self.assertEqual(10, g.warriors[(7, 2)].health)
 
-        g.end_turn()
+        g.complete_move()
         self.assertEqual("Turn W", g.mode)
 
         g.attack(7, 0)
