@@ -52,8 +52,6 @@ class Warrior:
 
 
 class Game:
-    # TODO Изменить "Turn" на "Move" в значениях поля mode
-    # TODO Изменить "Turn" на "Move" в названиях методов
     DEFAULT_SIZE_X = 8
     DEFAULT_SIZE_Y = 8
     DEFAULT_NUMBER_OF_WARRIORS = {"M": 3, "W": 3}
@@ -140,7 +138,7 @@ class Game:
     def refresh(self, team):
         if team == 'M' or team == 'W':
             self.move_points = self.DEFAULT_MOVE_POINTS
-            for warrior in self.warriors.values():
+            for warrior in self.warriors:
                 if warrior.team == team:
                     warrior.number_of_attack = self.DEFAULT_NUMBER_OF_ATTACKS
 

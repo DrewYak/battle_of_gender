@@ -178,7 +178,10 @@ class GameView(arcade.View):
         arcade.start_render()
         self.scene.draw()
         for ws in self.scene.get_sprite_list("Warriors"):
-            ws.draw_health_number()
+            if ws.warrior.health <= 0:
+                ws.remove_from_sprite_lists()
+            else:
+                ws.draw_health_number()
 
         text_mode = f"{self.g.mode}"
         arcade.draw_text(text_mode,
@@ -201,7 +204,6 @@ class GameView(arcade.View):
             if (warrior_sprite.center_x // 100 == x // 100 and
                     warrior_sprite.center_y // 100 == y // 100):
                 return warrior_sprite
-        return None
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         (norm_x, norm_y) = to_norm_coord(x, y)
@@ -213,10 +215,8 @@ class GameView(arcade.View):
                 (draw_x, draw_y) = to_draw_coord(norm_x, norm_y)
                 if (SHIFT <= draw_x <= SHIFT + SCREEN_WIDTH and
                         (0 <= draw_y <= SCREEN_HEIGHT)):
-                    from_x = self.selected_warrior_sprite.get_norm_x()
-                    from_y = self.selected_warrior_sprite.get_norm_y()
-                    to_x = norm_x
-                    to_y = norm_y
+                    (from_x, from_y) = to_norm_coord(self.selected_warrior_sprite.center_x, self.selected_warrior_sprite.center_y)
+                    (to_x, to_y) = (norm_x, norm_y)
 
                     self.g.go(from_x, from_y, to_x, to_y)
 
@@ -226,8 +226,8 @@ class GameView(arcade.View):
                                                                               self.selected_warrior_sprite.destination_x - self.selected_warrior_sprite.center_x)) * WARRIOR_MOVEMENT_SPEED
                     self.selected_warrior_sprite.change_y = int(math.copysign(1.0,
                                                                               self.selected_warrior_sprite.destination_y - self.selected_warrior_sprite.center_y)) * WARRIOR_MOVEMENT_SPEED
-                else:
-                    self.selected_warrior_sprite = None
+
+                self.selected_warrior_sprite = None
 
         if button == arcade.MOUSE_BUTTON_RIGHT:
             self.g.attack(norm_x, norm_y)
