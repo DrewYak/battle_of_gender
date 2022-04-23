@@ -117,25 +117,25 @@ class Game:
         return count
 
     def attack(self, from_x, from_y):
-        attack_cell = (from_x, from_y)
+        attack_warrior = self.get_warrior_by_norm_coordinates(from_x, from_y)
         if (0 <= from_x < self.DEFAULT_SIZE_X and
                 0 <= from_y < self.DEFAULT_SIZE_Y and
-                attack_cell in self.warriors and
-                "Turn " + self.warriors[attack_cell].team == self.mode and
-                self.warriors[attack_cell].number_of_attack > 0):
-            self.warriors[attack_cell].number_of_attack -= 1
+                attack_warrior is not None and
+                "Turn " + attack_warrior.team == self.mode and
+                attack_warrior.number_of_attack > 0):
+            attack_warrior.number_of_attack -= 1
             for dx in range(-2, 3, 1):
                 for dy in range(-2, 3, 1):
-                    victim_cell = (from_x + dx, from_y + dy)
+                    victim_warrior = self.get_warrior_by_norm_coordinates(from_x + dx, from_y + dy)
                     if (0 <= from_x + dx < Game.DEFAULT_SIZE_X and
                             0 <= from_y + dy < Game.DEFAULT_SIZE_Y and
-                            victim_cell in self.warriors and
-                            self.warriors[attack_cell].team != self.warriors[victim_cell].team):
-                        self.warriors[victim_cell].health -= self.warriors[attack_cell].damage_field[2 - dy][2 + dx]
-                        if self.warriors[victim_cell].health <= 0:
-                            del self.warriors[victim_cell]
-                            if self.get_count_warriors(self.warriors[victim_cell].team) == 0:
-                                self.mode = "Win " + self.warriors[attack_cell].team
+                            victim_warrior is not None and
+                            victim_warrior.team != attack_warrior.team):
+                        victim_warrior.health -= attack_warrior.damage_field[2 + dy][2 + dx]
+                        if victim_warrior.health <= 0:
+                            if self.get_count_warriors(victim_warrior.team) == 1:
+                                self.mode = "Win " + attack_warrior.team
+                            self.warriors.remove(victim_warrior)
 
     def refresh(self, team):
         if team == 'M' or team == 'W':
