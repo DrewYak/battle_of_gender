@@ -198,7 +198,8 @@ class GameView(arcade.View):
                          SCREEN_WIDTH - 50,
                          arcade.color.WHITE,
                          18)
-
+        if self.selected_warrior_sprite is not None:
+            self.draw_damage()
         self.manager.draw()
 
     def get_warrior_sprite_by_coordinates(self, x, y):
@@ -215,10 +216,21 @@ class GameView(arcade.View):
         end_index = len(df) // 2
         for y in range(start_index, end_index + 1):
             for x in range(start_index, end_index + 1):
-                if (x, y) != (0, 0) and 0 <= norm_x + x < SIZE and 0 <= norm_y + y < SIZE:
+                if ((x, y) != (0, 0) and
+                        0 <= norm_x + x < SIZE and
+                        0 <= norm_y + y < SIZE and
+                        df[y + len(df) // 2][x + len(df) // 2] !=0):
                     (draw_x, draw_y) = to_draw_coord(norm_x + x, norm_y + y)
                     s = str(df[y + len(df) // 2][x + len(df) // 2])
-                    self.sws_df.append(arcade.Text(s, draw_x, draw_y, arcade.color.RED, 80))
+                    arcade.draw_text(s,
+                                     draw_x + 4,
+                                     draw_y,
+                                     arcade.color.CARNELIAN,
+                                     40,
+                                     anchor_x="center",
+                                     anchor_y="center",
+                                     font_name=('Kenney Future Narrow', 'arial'),
+                                     bold=True)
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.LALT:
