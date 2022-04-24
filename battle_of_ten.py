@@ -28,6 +28,7 @@ MAX_HEALTH = 10
 
 # endregion
 
+
 def to_norm_coord(draw_x, draw_y):
     norm_x = (draw_x - SHIFT) // 100
     norm_y = draw_y // 100
@@ -146,7 +147,7 @@ class GameView(arcade.View):
         warrior_sprite = WarriorSprite("images/T1_P_128.png", SPRITE_SCALING_WARRIOR, warrior)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
-        warrior = game_logic.Warrior(6, 1, "M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_ARC)
+        warrior = game_logic.Warrior(0, 1, "M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_ARC)
         self.g.add_warrior(warrior)
         warrior_sprite = WarriorSprite("images/T1_A_128.png", SPRITE_SCALING_WARRIOR, warrior)
         self.scene.add_sprite("Warriors", warrior_sprite)
@@ -177,6 +178,7 @@ class GameView(arcade.View):
     def on_draw(self):
         arcade.start_render()
         self.scene.draw()
+
         for ws in self.scene.get_sprite_list("Warriors"):
             if ws.warrior.health <= 0:
                 ws.remove_from_sprite_lists()
@@ -205,6 +207,29 @@ class GameView(arcade.View):
                     warrior_sprite.center_y // 100 == y // 100):
                 return warrior_sprite
 
+    def draw_damage(self):
+        ws = self.selected_warrior_sprite
+        df = ws.warrior.damage_field
+        (norm_x, norm_y) = to_norm_coord(ws.center_x, ws.center_y)
+        start_index = - (len(df) // 2)
+        end_index = len(df) // 2
+        for y in range(start_index, end_index + 1):
+            for x in range(start_index, end_index + 1):
+                if (x, y) != (0, 0) and 0 <= norm_x + x < SIZE and 0 <= norm_y + y < SIZE:
+                    (draw_x, draw_y) = to_draw_coord(norm_x + x, norm_y + y)
+                    s = str(df[y + len(df) // 2][x + len(df) // 2])
+                    self.sws_df.append(arcade.Text(s, draw_x, draw_y, arcade.color.RED, 80))
+
+    def on_key_press(self, symbol: int, modifiers: int):
+        if symbol == arcade.key.LALT:
+            self.scene.get_sprite_list("Cells")[0].color = arcade.csscolor.RED
+            if self.selected_warrior_sprite is not None:
+                self.draw_damage()
+
+    def on_key_release(self, _symbol: int, _modifiers: int):
+        if _symbol == arcade.key.LALT:
+            self.scene.get_sprite_list("Cells")[0].color = arcade.csscolor.WHITE
+
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         (norm_x, norm_y) = to_norm_coord(x, y)
 
@@ -215,7 +240,8 @@ class GameView(arcade.View):
                 (draw_x, draw_y) = to_draw_coord(norm_x, norm_y)
                 if (SHIFT <= draw_x <= SHIFT + SCREEN_WIDTH and
                         (0 <= draw_y <= SCREEN_HEIGHT)):
-                    (from_x, from_y) = to_norm_coord(self.selected_warrior_sprite.center_x, self.selected_warrior_sprite.center_y)
+                    (from_x, from_y) = to_norm_coord(self.selected_warrior_sprite.center_x,
+                                                     self.selected_warrior_sprite.center_y)
                     (to_x, to_y) = (norm_x, norm_y)
 
                     self.g.go(from_x, from_y, to_x, to_y)
