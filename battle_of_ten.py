@@ -25,6 +25,9 @@ HEALTH_NUMBER_OFFSET_Y = 28
 
 MAX_HEALTH = 10
 
+MAN_COLOR = (31, 65, 96)
+WOMAN_COLOR = (104, 22, 0)
+
 
 # endregion
 
@@ -57,7 +60,7 @@ class WarriorSprite(arcade.Sprite):
                          width=20,
                          align="right",
                          bold=True,
-                         font_name=('Kenney Future Narrow', 'arial'))
+                         font_name="Kenney Future Narrow")
 
     def update(self):
         (dest_x, dest_y) = to_draw_coord(self.warrior.x, self.warrior.y)
@@ -108,6 +111,9 @@ class GameView(arcade.View):
 
         self.scene = None
         self.g = None
+
+        self.left_text_move_points = None
+        self.right_text_move_points = None
 
         self.selected_warrior_sprite = None
 
@@ -172,6 +178,24 @@ class GameView(arcade.View):
         warrior_sprite = WarriorSprite("images/T2_W_128.png", SPRITE_SCALING_WARRIOR, warrior)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
+        self.left_text_move_points = arcade.Text(text=f"{self.g.move_points}",
+                                                 start_x=10,
+                                                 start_y=SCREEN_HEIGHT - 10,
+                                                 color=MAN_COLOR,
+                                                 font_size=18,
+                                                 font_name="Kenney Future Narrow",
+                                                 anchor_x="left",
+                                                 anchor_y="top")
+
+        self.right_text_move_points = arcade.Text(text=f"{self.g.move_points}",
+                                                  start_x=10,
+                                                  start_y=SCREEN_HEIGHT - 10,
+                                                  color=WOMAN_COLOR,
+                                                  font_size=18,
+                                                  font_name="Kenney Future Narrow",
+                                                  anchor_x="left",
+                                                  anchor_y="top")
+
     def on_click_left_end_turn(self, event):
         self.g.complete_move()
 
@@ -185,19 +209,27 @@ class GameView(arcade.View):
             else:
                 ws.draw_health_number()
 
-        text_mode = f"{self.g.mode}"
-        arcade.draw_text(text_mode,
-                         10,
-                         SCREEN_WIDTH - 30,
-                         arcade.color.WHITE,
-                         18)
+        if self.g.mode == "Turn M":
+            self.left_text_move_points = arcade.Text(text=f"{self.g.move_points}",
+                                                     start_x=10,
+                                                     start_y=SCREEN_HEIGHT - 10,
+                                                     color=MAN_COLOR,
+                                                     font_size=18,
+                                                     font_name="Kenney Future Narrow.ttf",
+                                                     anchor_x="left",
+                                                     anchor_y="top")
+            self.left_text_move_points.draw()
+        elif self.g.mode == "Turn W":
+            self.left_text_move_points = arcade.Text(text=f"{self.g.move_points}",
+                                                     start_x=SCREEN_WIDTH + 2 * SHIFT - 10,
+                                                     start_y=SCREEN_HEIGHT - 10,
+                                                     color=WOMAN_COLOR,
+                                                     font_size=18,
+                                                     font_name="Kenney Future Narrow",
+                                                     anchor_x="right",
+                                                     anchor_y="top")
+            self.left_text_move_points.draw()
 
-        text_move_points = f"{self.g.move_points}"
-        arcade.draw_text(text_move_points,
-                         10,
-                         SCREEN_WIDTH - 50,
-                         arcade.color.WHITE,
-                         18)
         if self.selected_warrior_sprite is not None:
             self.draw_damage()
         self.manager.draw()
@@ -219,7 +251,7 @@ class GameView(arcade.View):
                 if ((x, y) != (0, 0) and
                         0 <= norm_x + x < SIZE and
                         0 <= norm_y + y < SIZE and
-                        df[y + len(df) // 2][x + len(df) // 2] !=0):
+                        df[y + len(df) // 2][x + len(df) // 2] != 0):
                     (draw_x, draw_y) = to_draw_coord(norm_x + x, norm_y + y)
                     s = str(df[y + len(df) // 2][x + len(df) // 2])
                     arcade.draw_text(s,
@@ -229,7 +261,7 @@ class GameView(arcade.View):
                                      40,
                                      anchor_x="center",
                                      anchor_y="center",
-                                     font_name=('Kenney Future Narrow', 'arial'),
+                                     font_name="Kenney Future Narrow",
                                      bold=True)
 
     def on_key_press(self, symbol: int, modifiers: int):
