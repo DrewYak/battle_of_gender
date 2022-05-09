@@ -237,6 +237,42 @@ class GameView(arcade.View):
                                                          center_x=center_x_begin + 9 + (self.g.move_points - 1) * 18)
             self.left_sprite_move_points.draw()
 
+    def draw_right_text_move_points(self):
+        self.left_text_move_points = arcade.Text(text=f"{self.g.move_points}",
+                                                 start_x=SCREEN_WIDTH + 2 * SHIFT - 10,
+                                                 start_y=SCREEN_HEIGHT - 10,
+                                                 color=WOMAN_COLOR,
+                                                 font_size=18,
+                                                 font_name="Kenney Future Narrow",
+                                                 anchor_x="right",
+                                                 anchor_y="top")
+        self.left_text_move_points.draw()
+
+    def draw_right_line_move_points(self):
+        if self.g.move_points > 0:
+            center_x_begin = SCREEN_HEIGHT + 2 * SHIFT - 50
+            self.left_sprite_move_points = arcade.Sprite(filename="images/right_move_points_W.png",
+                                                         image_width=9,
+                                                         image_height=18,
+                                                         center_y=SCREEN_HEIGHT - 24,
+                                                         center_x=center_x_begin)
+            self.left_sprite_move_points.draw()
+
+            for i in range(self.g.move_points - 1):
+                self.left_sprite_move_points = arcade.Sprite(filename="images/center_move_points_W.png",
+                                                             image_width=18,
+                                                             image_height=18,
+                                                             center_y=SCREEN_HEIGHT - 24,
+                                                             center_x=center_x_begin - 13.5 - i * 18)
+                self.left_sprite_move_points.draw()
+
+            self.left_sprite_move_points = arcade.Sprite(filename="images/left_move_points_W.png",
+                                                         image_width=9,
+                                                         image_height=18,
+                                                         center_y=SCREEN_HEIGHT - 24,
+                                                         center_x=center_x_begin - 9 - (self.g.move_points - 1) * 18)
+            self.left_sprite_move_points.draw()
+
     def on_draw(self):
         arcade.start_render()
         self.scene.draw()
@@ -251,21 +287,9 @@ class GameView(arcade.View):
             self.draw_left_text_move_points()
             self.draw_left_line_move_points()
 
-
-
-
         elif self.g.mode == "Turn W":
-            self.left_text_move_points = arcade.Text(text=f"{self.g.move_points}",
-                                                     start_x=SCREEN_WIDTH + 2 * SHIFT - 10,
-                                                     start_y=SCREEN_HEIGHT - 10,
-                                                     color=WOMAN_COLOR,
-                                                     font_size=18,
-                                                     font_name="Kenney Future Narrow",
-                                                     anchor_x="right",
-                                                     anchor_y="top")
-            self.left_text_move_points.draw()
-
-
+            self.draw_right_text_move_points()
+            self.draw_right_line_move_points()
 
         if self.selected_warrior_sprite is not None:
             self.draw_damage()
