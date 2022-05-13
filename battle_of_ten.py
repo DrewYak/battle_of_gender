@@ -62,6 +62,14 @@ class WarriorSprite(arcade.Sprite):
                          bold=True,
                          font_name="Kenney Future Narrow")
 
+    def draw_number_of_attack(self):
+        for i in range(self.warrior.number_of_attack):
+            arcade.draw_circle_filled(center_x=self.center_x + 37,
+                                      center_y=self.center_y - 37 + 12 * i,
+                                      radius=5,
+                                      color=(107, 68, 35))
+
+
     def update(self):
         (dest_x, dest_y) = to_draw_coord(self.warrior.x, self.warrior.y)
         if abs(self.center_x - dest_x) <= abs(self.change_x):
@@ -282,6 +290,8 @@ class GameView(arcade.View):
                 ws.remove_from_sprite_lists()
             else:
                 ws.draw_health_number()
+                ws.draw_number_of_attack()
+
 
         if self.g.mode == "Turn M":
             self.draw_left_text_move_points()
