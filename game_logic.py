@@ -125,8 +125,8 @@ class Game:
         result = []
         w = self.get_warrior_by_norm_coordinates(norm_x, norm_y)
         if w is not None and self.mode == "Turn " + w.team:
-            for i in range(self.move_points):
-                for j in range(self.move_points - i):
+            for i in range(self.move_points + 1):
+                for j in range(self.move_points - i + 1):
                     x, y = norm_x + i, norm_y + j
                     if self.is_inner_cell(x, y) and self.is_free_cell(x, y):
                         result.append(x * self.DEFAULT_SIZE_Y + y)
