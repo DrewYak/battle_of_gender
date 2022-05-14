@@ -337,7 +337,7 @@ class GameView(arcade.View):
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.LALT:
-            self.scene.get_sprite_list("Cells")[0].color = arcade.csscolor.RED
+            self.scene.get_sprite_list("Cells")[0].color = arcade.color.ANDROID_GREEN
             if self.selected_warrior_sprite is not None:
                 self.draw_damage()
 
@@ -345,13 +345,21 @@ class GameView(arcade.View):
         if _symbol == arcade.key.LALT:
             self.scene.get_sprite_list("Cells")[0].color = arcade.csscolor.WHITE
 
+
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         (norm_x, norm_y) = to_norm_coord(x, y)
 
         if button == arcade.MOUSE_BUTTON_LEFT:
             if self.selected_warrior_sprite is None:
                 self.selected_warrior_sprite = self.get_warrior_sprite_by_coordinates(x, y)
+                list_of_cells = self.g.get_cells_available_to_move(norm_x, norm_y)
+                for cell_num in list_of_cells:
+                    cell = self.scene.get_sprite_list("Cells")[cell_num]
+                    cell.color = arcade.color.ANDROID_GREEN
             else:
+                for cell in self.scene.get_sprite_list("Cells"):
+                    cell.color = arcade.color.WHITE
+
                 (draw_x, draw_y) = to_draw_coord(norm_x, norm_y)
                 if (SHIFT <= draw_x <= SHIFT + SCREEN_WIDTH and
                         (0 <= draw_y <= SCREEN_HEIGHT)):

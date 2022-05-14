@@ -123,7 +123,8 @@ class Game:
 
     def get_cells_available_to_move(self, norm_x, norm_y):
         result = []
-        if self.get_warrior_by_norm_coordinates(norm_x, norm_y) is not None:
+        w = self.get_warrior_by_norm_coordinates(norm_x, norm_y)
+        if w is not None and self.mode == "Turn " + w.team:
             for i in range(self.move_points):
                 for j in range(self.move_points - i):
                     x, y = norm_x + i, norm_y + j
