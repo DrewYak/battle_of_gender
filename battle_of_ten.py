@@ -165,27 +165,27 @@ class GameView(arcade.View):
         warrior_sprite = WarriorSprite("images/T1_P_128.png", SPRITE_SCALING_WARRIOR, warrior)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
-        warrior = game_logic.Warrior(0, 1, "M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_ARC)
+        warrior = game_logic.Warrior(0, 2, "M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_ARC)
         self.g.add_warrior(warrior)
         warrior_sprite = WarriorSprite("images/T1_A_128.png", SPRITE_SCALING_WARRIOR, warrior)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
-        warrior = game_logic.Warrior(0, 2, "M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_WIZ)
+        warrior = game_logic.Warrior(0, 4, "M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_WIZ)
         self.g.add_warrior(warrior)
         warrior_sprite = WarriorSprite("images/T1_W_128.png", SPRITE_SCALING_WARRIOR, warrior)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
-        warrior = game_logic.Warrior(7, 0, "W", 10, 1, game_logic.Warrior.DAMAGE_FIELD_W_PAL)
+        warrior = game_logic.Warrior(7, 7, "W", 10, 1, game_logic.Warrior.DAMAGE_FIELD_W_PAL)
         self.g.add_warrior(warrior)
         warrior_sprite = WarriorSprite("images/T2_P_128.png", SPRITE_SCALING_WARRIOR, warrior)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
-        warrior = game_logic.Warrior(7, 1, "W", 10, 1, game_logic.Warrior.DAMAGE_FIELD_W_ARC)
+        warrior = game_logic.Warrior(7, 5, "W", 10, 1, game_logic.Warrior.DAMAGE_FIELD_W_ARC)
         self.g.add_warrior(warrior)
         warrior_sprite = WarriorSprite("images/T2_A_128.png", SPRITE_SCALING_WARRIOR, warrior)
         self.scene.add_sprite("Warriors", warrior_sprite)
 
-        warrior = game_logic.Warrior(7, 2, "W", 10, 1, game_logic.Warrior.DAMAGE_FIELD_W_WIZ)
+        warrior = game_logic.Warrior(7, 3, "W", 10, 1, game_logic.Warrior.DAMAGE_FIELD_W_WIZ)
         self.g.add_warrior(warrior)
         warrior_sprite = WarriorSprite("images/T2_W_128.png", SPRITE_SCALING_WARRIOR, warrior)
         self.scene.add_sprite("Warriors", warrior_sprite)
