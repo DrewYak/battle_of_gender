@@ -114,6 +114,33 @@ class Game:
                 count += 1
         return count
 
+    def is_inner_cell(self, norm_x, norm_y):
+        return all([0 <= norm_x < self.DEFAULT_SIZE_X,
+                    0 <= norm_y < self.DEFAULT_SIZE_Y])
+
+    def is_free_cell(self, norm_x, norm_y):
+        return self.get_warrior_by_norm_coordinates(norm_x, norm_y) is None
+
+    def get_cells_available_to_move(self, norm_x, norm_y):
+        result = []
+        if self.get_warrior_by_norm_coordinates(norm_x, norm_y) is not None:
+            for i in range(self.move_points):
+                for j in range(self.move_points - i):
+                    x, y = norm_x + i, norm_y + j
+                    if self.is_inner_cell(x, y) and self.is_free_cell(x, y):
+                        result.append(x * self.DEFAULT_SIZE_Y + y)
+                    x, y = norm_x + i, norm_y - j
+                    if self.is_inner_cell(x, y) and self.is_free_cell(x, y):
+                        result.append(x * self.DEFAULT_SIZE_Y + y)
+                    x, y = norm_x - i, norm_y + j
+                    if self.is_inner_cell(x, y) and self.is_free_cell(x, y):
+                        result.append(x * self.DEFAULT_SIZE_Y + y)
+                    x, y = norm_x - i, norm_y - j
+                    if self.is_inner_cell(x, y) and self.is_free_cell(x, y):
+                        result.append(x * self.DEFAULT_SIZE_Y + y)
+        result = list(set(result))
+        return result
+
     def attack(self, from_x, from_y):
         attack_warrior = self.get_warrior_by_norm_coordinates(from_x, from_y)
         if (0 <= from_x < self.DEFAULT_SIZE_X and
