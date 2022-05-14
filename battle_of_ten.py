@@ -143,6 +143,8 @@ class GameView(arcade.View):
                                                    anchor_y="top",
                                                    child=self.l_box, ))
 
+        self.is_LALT_press = False
+
     def setup(self):
         self.scene = arcade.Scene()
 
@@ -301,7 +303,7 @@ class GameView(arcade.View):
             self.draw_right_text_move_points()
             self.draw_right_line_move_points()
 
-        if self.selected_warrior_sprite is not None:
+        if self.is_LALT_press:
             self.draw_damage()
         self.manager.draw()
 
@@ -313,38 +315,38 @@ class GameView(arcade.View):
 
     def draw_damage(self):
         ws = self.selected_warrior_sprite
-        df = ws.warrior.damage_field
-        (norm_x, norm_y) = to_norm_coord(ws.center_x, ws.center_y)
-        start_index = - (len(df) // 2)
-        end_index = len(df) // 2
-        for y in range(start_index, end_index + 1):
-            for x in range(start_index, end_index + 1):
-                if ((x, y) != (0, 0) and
+        if ws is not None:
+            df = ws.warrior.damage_field
+            (norm_x, norm_y) = to_norm_coord(ws.center_x, ws.center_y)
+            start_index = - (len(df) // 2)
+            end_index = len(df) // 2
+            for y in range(start_index, end_index + 1):
+                for x in range(start_index, end_index + 1):
+                    if ((x, y) != (0, 0) and
                         0 <= norm_x + x < SIZE and
                         0 <= norm_y + y < SIZE and
                         df[y + len(df) // 2][x + len(df) // 2] != 0):
-                    (draw_x, draw_y) = to_draw_coord(norm_x + x, norm_y + y)
-                    s = str(df[y + len(df) // 2][x + len(df) // 2])
-                    arcade.draw_text(s,
-                                     draw_x + 4,
-                                     draw_y,
-                                     arcade.color.CARNELIAN,
-                                     40,
-                                     anchor_x="center",
-                                     anchor_y="center",
-                                     font_name="Kenney Future Narrow",
-                                     bold=True)
+                        (draw_x, draw_y) = to_draw_coord(norm_x + x, norm_y + y)
+                        s = str(df[y + len(df) // 2][x + len(df) // 2])
+                        arcade.draw_text(s,
+                                         draw_x + 4,
+                                         draw_y,
+                                         arcade.color.CARNELIAN,
+                                         40,
+                                         anchor_x="center",
+                                         anchor_y="center",
+                                         font_name="Kenney Future Narrow",
+                                         bold=True)
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.LALT:
-            self.scene.get_sprite_list("Cells")[0].color = arcade.color.ANDROID_GREEN
-            if self.selected_warrior_sprite is not None:
-                self.draw_damage()
+            #self.scene.get_sprite_list("Cells")[0].color = arcade.color.RED
+            self.is_LALT_press = True
 
     def on_key_release(self, _symbol: int, _modifiers: int):
         if _symbol == arcade.key.LALT:
             self.scene.get_sprite_list("Cells")[0].color = arcade.csscolor.WHITE
-
+            self.is_LALT_press = False
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         (norm_x, norm_y) = to_norm_coord(x, y)
