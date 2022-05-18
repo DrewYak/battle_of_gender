@@ -1,6 +1,9 @@
 import arcade
 import arcade.gui
 import math
+
+from Андрей.graph import width
+
 import game_logic
 
 # region Константы
@@ -25,9 +28,12 @@ HEALTH_NUMBER_OFFSET_Y = 28
 
 MAX_HEALTH = 10
 
-MAN_COLOR = (31, 65, 96)
-WOMAN_COLOR = (104, 22, 0)
-
+MAN_COLOR_LIGHT = (57, 106, 149)
+MAN_COLOR_MEDIUM = (41, 83, 128)
+MAN_COLOR_DARK = (31, 65, 96)
+WOMAN_COLOR_LIGHT = (226, 98, 64)
+WOMAN_COLOR_MEDIUM = (160, 38, 0)
+WOMAN_COLOR_DARK = (104, 22, 0)
 
 # endregion
 
@@ -35,13 +41,13 @@ WOMAN_COLOR = (104, 22, 0)
 def to_norm_coord(draw_x, draw_y):
     norm_x = (draw_x - SHIFT) // 100
     norm_y = draw_y // 100
-    return (norm_x, norm_y)
+    return norm_x, norm_y
 
 
 def to_draw_coord(norm_x, norm_y):
     draw_x = SHIFT + norm_x * 100 + 50
     draw_y = norm_y * 100 + 50
-    return (draw_x, draw_y)
+    return draw_x, draw_y
 
 
 class WarriorSprite(arcade.Sprite):
@@ -68,7 +74,6 @@ class WarriorSprite(arcade.Sprite):
                                       center_y=self.center_y - 37 + 12 * i,
                                       radius=5,
                                       color=(107, 68, 35))
-
 
     def update(self):
         (dest_x, dest_y) = to_draw_coord(self.warrior.x, self.warrior.y)
@@ -129,8 +134,24 @@ class GameView(arcade.View):
 
         self.window.background_color = (217, 205, 175)
 
+        # В справке написано, что эти 2 строчки нужны всегда при использовании UI.
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
+
+        # Описываем стили кнопок.
+        man_style = {
+            "font_name": ("Kenney Future Narrow", "calibri", "arial"),
+            "font_size": 15,
+            "font_color": arcade.color.WHITE,
+            "border_width": 2,
+            "border_color": None,
+            "bg_color": MAN_COLOR_DARK,
+
+            # used if button is pressed
+            "bg_color_pressed": arcade.color.WHITE,
+            "border_color_pressed": arcade.color.WHITE,  # also used when hovered
+            "font_color_pressed": arcade.color.BLACK,
+        }
 
         self.l_box = arcade.gui.UIBoxLayout()
 
@@ -142,6 +163,8 @@ class GameView(arcade.View):
         self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="left",
                                                    anchor_y="top",
                                                    child=self.l_box, ))
+
+        self.manager.add(arcade.gui.UIFlatButton(x=100, y=100, width=100,height=50, text="Hello",))
 
         self.is_LALT_press = False
 
@@ -160,6 +183,7 @@ class GameView(arcade.View):
 
         self.g = game_logic.Game("Turn M", 10, [])
 
+        # region Добавление игроков и очков движения
         warrior = game_logic.Warrior(0, 0, "M", 10, 1, game_logic.Warrior.DAMAGE_FIELD_M_PAL)
         self.g.add_warrior(warrior)
         warrior_sprite = WarriorSprite("images/T1_P_128.png", SPRITE_SCALING_WARRIOR, warrior)
@@ -193,7 +217,7 @@ class GameView(arcade.View):
         self.left_text_move_points = arcade.Text(text=f"{self.g.move_points}",
                                                  start_x=10,
                                                  start_y=SCREEN_HEIGHT - 10,
-                                                 color=MAN_COLOR,
+                                                 color=MAN_COLOR_DARK,
                                                  font_size=18,
                                                  font_name="Kenney Future Narrow",
                                                  anchor_x="left",
@@ -202,11 +226,12 @@ class GameView(arcade.View):
         self.right_text_move_points = arcade.Text(text=f"{self.g.move_points}",
                                                   start_x=10,
                                                   start_y=SCREEN_HEIGHT - 10,
-                                                  color=WOMAN_COLOR,
+                                                  color=WOMAN_COLOR_DARK,
                                                   font_size=18,
                                                   font_name="Kenney Future Narrow",
                                                   anchor_x="left",
                                                   anchor_y="top")
+        # endregion
 
     def on_click_left_end_turn(self, event):
         self.g.complete_move()
@@ -215,7 +240,7 @@ class GameView(arcade.View):
         self.left_text_move_points = arcade.Text(text=f"{self.g.move_points}",
                                                  start_x=10,
                                                  start_y=SCREEN_HEIGHT - 10,
-                                                 color=MAN_COLOR,
+                                                 color=MAN_COLOR_DARK,
                                                  font_size=18,
                                                  font_name="Kenney Future Narrow",
                                                  anchor_x="left",
@@ -251,7 +276,7 @@ class GameView(arcade.View):
         self.left_text_move_points = arcade.Text(text=f"{self.g.move_points}",
                                                  start_x=SCREEN_WIDTH + 2 * SHIFT - 10,
                                                  start_y=SCREEN_HEIGHT - 10,
-                                                 color=WOMAN_COLOR,
+                                                 color=WOMAN_COLOR_DARK,
                                                  font_size=18,
                                                  font_name="Kenney Future Narrow",
                                                  anchor_x="right",
@@ -294,7 +319,6 @@ class GameView(arcade.View):
                 ws.draw_health_number()
                 ws.draw_number_of_attack()
 
-
         if self.g.mode == "Turn M":
             self.draw_left_text_move_points()
             self.draw_left_line_move_points()
@@ -323,9 +347,9 @@ class GameView(arcade.View):
             for y in range(start_index, end_index + 1):
                 for x in range(start_index, end_index + 1):
                     if ((x, y) != (0, 0) and
-                        0 <= norm_x + x < SIZE and
-                        0 <= norm_y + y < SIZE and
-                        df[y + len(df) // 2][x + len(df) // 2] != 0):
+                            0 <= norm_x + x < SIZE and
+                            0 <= norm_y + y < SIZE and
+                            df[y + len(df) // 2][x + len(df) // 2] != 0):
                         (draw_x, draw_y) = to_draw_coord(norm_x + x, norm_y + y)
                         s = str(df[y + len(df) // 2][x + len(df) // 2])
                         arcade.draw_text(s,
@@ -340,7 +364,7 @@ class GameView(arcade.View):
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.LALT:
-            #self.scene.get_sprite_list("Cells")[0].color = arcade.color.RED
+            # self.scene.get_sprite_list("Cells")[0].color = arcade.color.RED
             self.is_LALT_press = True
 
     def on_key_release(self, _symbol: int, _modifiers: int):
