@@ -15,16 +15,9 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
 SCREEN_TITLE = "Битва полов"
 
-HEALTH_BAR_WIDTH = 95
-HEALTH_BAR_HEIGHT = 5
-HEALTH_BAR_OFFSET_Y = 50
-
-HEALTH_NUMBER_OFFSET_X = 30
-HEALTH_NUMBER_OFFSET_Y = 28
-
 MAX_HEALTH = 10
 
-MAN_COLOR_LIGHT = (57, 106, 149)
+MAN_COLOR_LIGHT = (128, 167, 197)
 MAN_COLOR_MEDIUM = (41, 83, 128)
 MAN_COLOR_DARK = (31, 65, 96)
 WOMAN_COLOR_LIGHT = (226, 98, 64)
@@ -34,7 +27,33 @@ CELL_COLOR = (211, 191, 143)
 CELL_BORDER_COLOR = (177, 160, 119)
 BG_COLOR = (217, 205, 175)
 
+# Описываем стили кнопок
+MAN_STYLE = {
+    "font_name": ("calibri", "arial"),
+    "font_size": 20,
+    "font_color": arcade.color.BLACK,
+    "border_width": 2,
+    "border_color": CELL_BORDER_COLOR,
+    "bg_color": CELL_COLOR,
 
+    # used if button is pressed
+    "bg_color_pressed": MAN_COLOR_DARK,
+    "border_color_pressed": MAN_COLOR_DARK,  # also used when hovered
+    "font_color_pressed": BG_COLOR,
+}
+WOMAN_STYLE = {
+    "font_name": ("calibri", "arial"),
+    "font_size": 20,
+    "font_color": arcade.color.BLACK,
+    "border_width": 2,
+    "border_color": CELL_BORDER_COLOR,
+    "bg_color": CELL_COLOR,
+
+    # used if button is pressed
+    "bg_color_pressed": WOMAN_COLOR_DARK,
+    "border_color_pressed": WOMAN_COLOR_DARK,  # also used when hovered
+    "font_color_pressed": BG_COLOR,
+}
 # endregion
 
 
@@ -100,37 +119,22 @@ class MenuView(arcade.View):
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
 
-        # Описываем стили кнопок.
-        man_style = {
-            "font_name": ("calibri", "arial"),
-            "font_size": 20,
-            "font_color": arcade.color.BLACK,
-            "border_width": 2,
-            "border_color": CELL_BORDER_COLOR,
-            "bg_color": CELL_COLOR,
-
-            # used if button is pressed
-            "bg_color_pressed": MAN_COLOR_DARK,
-            "border_color_pressed": MAN_COLOR_DARK,  # also used when hovered
-            "font_color_pressed": BG_COLOR,
-        }
-
         self.c_box = arcade.gui.UIBoxLayout()
 
         button_game_with_friend = arcade.gui.UIFlatButton(text="Играть с другом",
                                                           width=230,
-                                                          style=man_style)
+                                                          style=MAN_STYLE)
         self.c_box.add(button_game_with_friend.with_space_around(top=0))
         button_game_with_friend.on_click = self.on_click_button_game_with_friend
 
         button_instruction = arcade.gui.UIFlatButton(text="Инструкция",
                                                      width=230,
-                                                     style=man_style)
+                                                     style=MAN_STYLE)
         self.c_box.add(button_instruction.with_space_around(top=10))
 
         button_quit = arcade.gui.UIFlatButton(text="Выйти из игры",
                                               width=230,
-                                              style=man_style)
+                                              style=MAN_STYLE)
         self.c_box.add(button_quit.with_space_around(top=10))
         button_quit.on_click = self.on_click_button_quit
 
@@ -160,18 +164,21 @@ class MenuView(arcade.View):
         arcade.draw_text("БИТВА ПОЛОВ",
                          (SCREEN_WIDTH + SHIFT * 2) / 2,
                          SCREEN_HEIGHT - 90,
-                         arcade.color.AUBURN,
+                         WOMAN_COLOR_MEDIUM,
+                         # arcade.color.AUBURN,
                          font_size=50,
                          anchor_x="center")
         arcade.draw_text("BATTLE OF GENDER",
                          (SCREEN_WIDTH + SHIFT * 2) / 2,
                          SCREEN_HEIGHT - 140,
-                         arcade.color.AUBURN,
+                         WOMAN_COLOR_MEDIUM,
+                         # arcade.color.AUBURN,
                          font_size=20,
                          anchor_x="center")
         self.manager.draw()
-        arcade.draw_scaled_texture_rectangle(texture=self.l_texture, center_x=250, center_y=350)
-        arcade.draw_scaled_texture_rectangle(texture=self.r_texture, center_x=SCREEN_WIDTH + 350, center_y=350)
+        arcade.draw_scaled_texture_rectangle(texture=self.l_texture, center_x=350, center_y=350, scale=0.8)
+        arcade.draw_scaled_texture_rectangle(texture=self.r_texture, center_x=SCREEN_WIDTH + 250, center_y=350,
+                                             scale=0.8)
 
 
 class GameView(arcade.View):
@@ -194,49 +201,20 @@ class GameView(arcade.View):
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
 
-        # Описываем стили кнопок.
-        man_style = {
-            "font_name": ("calibri", "arial"),
-            "font_size": 20,
-            "font_color": arcade.color.BLACK,
-            "border_width": 2,
-            "border_color": CELL_BORDER_COLOR,
-            "bg_color": CELL_COLOR,
-
-            # used if button is pressed
-            "bg_color_pressed": MAN_COLOR_DARK,
-            "border_color_pressed": MAN_COLOR_DARK,  # also used when hovered
-            "font_color_pressed": BG_COLOR,
-        }
-
         self.l_box = arcade.gui.UIBoxLayout()
         left_button_end_turn = arcade.gui.UIFlatButton(text="Завершить ход",
                                                        width=215,
-                                                       style=man_style)
+                                                       style=MAN_STYLE)
         left_button_end_turn.on_click = self.on_click_left_end_turn
         self.l_box.add(left_button_end_turn.with_space_around(top=60, left=8))
         self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="left",
                                                    anchor_y="top",
                                                    child=self.l_box))
 
-        woman_style = {
-            "font_name": ("calibri", "arial"),
-            "font_size": 20,
-            "font_color": arcade.color.BLACK,
-            "border_width": 2,
-            "border_color": CELL_BORDER_COLOR,
-            "bg_color": CELL_COLOR,
-
-            # used if button is pressed
-            "bg_color_pressed": WOMAN_COLOR_DARK,
-            "border_color_pressed": WOMAN_COLOR_DARK,  # also used when hovered
-            "font_color_pressed": BG_COLOR,
-        }
-
         self.r_box = arcade.gui.UIBoxLayout(align="right")
         right_button_end_turn = arcade.gui.UIFlatButton(text="Завершить ход",
                                                         width=215,
-                                                        style=woman_style)
+                                                        style=WOMAN_STYLE)
         right_button_end_turn.on_click = self.on_click_right_end_turn
         self.r_box.add(right_button_end_turn.with_space_around(top=60, right=8))
         self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="right",
@@ -434,15 +412,44 @@ class GameView(arcade.View):
                             df[y + len(df) // 2][x + len(df) // 2] != 0):
                         (draw_x, draw_y) = to_draw_coord(norm_x + x, norm_y + y)
                         s = str(df[y + len(df) // 2][x + len(df) // 2])
-                        arcade.draw_text(s,
-                                         draw_x + 4,
-                                         draw_y,
-                                         arcade.color.CARNELIAN,
-                                         40,
-                                         anchor_x="center",
-                                         anchor_y="center",
-                                         font_name="Kenney Future Narrow",
-                                         bold=True)
+                        if ws.warrior.team == "M":
+                            arcade.draw_circle_filled(center_x=draw_x,
+                                                      center_y=draw_y,
+                                                      radius=25,
+                                                      color=MAN_COLOR_LIGHT)
+                            arcade.draw_circle_outline(center_x=draw_x,
+                                                       center_y=draw_y,
+                                                       radius=25,
+                                                       color=MAN_COLOR_DARK,
+                                                       border_width=3)
+                            arcade.draw_text(s,
+                                             draw_x + 4,
+                                             draw_y + 3,
+                                             MAN_COLOR_DARK,
+                                             30,
+                                             anchor_x="center",
+                                             anchor_y="center",
+                                             font_name="Kenney Future Narrow",
+                                             bold=True)
+                        elif ws.warrior.team == "W":
+                            arcade.draw_circle_filled(center_x=draw_x,
+                                                      center_y=draw_y,
+                                                      radius=25,
+                                                      color=WOMAN_COLOR_LIGHT)
+                            arcade.draw_circle_outline(center_x=draw_x,
+                                                       center_y=draw_y,
+                                                       radius=25,
+                                                       color=WOMAN_COLOR_DARK,
+                                                       border_width=3)
+                            arcade.draw_text(s,
+                                             draw_x + 4,
+                                             draw_y + 3,
+                                             WOMAN_COLOR_DARK,
+                                             30,
+                                             anchor_x="center",
+                                             anchor_y="center",
+                                             font_name="Kenney Future Narrow",
+                                             bold=True)
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.LALT:
@@ -494,10 +501,8 @@ class GameView(arcade.View):
 
 def main():
     window = arcade.Window(SCREEN_WIDTH + SHIFT * 2, SCREEN_HEIGHT, SCREEN_TITLE)
-
     start_view = MenuView()
     window.show_view(start_view)
-
     arcade.run()
 
 
