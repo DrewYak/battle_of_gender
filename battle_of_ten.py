@@ -33,6 +33,8 @@ WOMAN_COLOR_DARK = (104, 22, 0)
 CELL_COLOR = (211, 191, 143)
 CELL_BORDER_COLOR = (177, 160, 119)
 BG_COLOR = (217, 205, 175)
+
+
 # endregion
 
 
@@ -91,29 +93,84 @@ class WarriorSprite(arcade.Sprite):
 
 class InstructionView(arcade.View):
 
+    def __init__(self):
+        super().__init__()
+
+        # В справке написано, что эти 2 строчки нужны всегда при использовании UI.
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+
+        # Описываем стили кнопок.
+        man_style = {
+            "font_name": ("calibri", "arial"),
+            "font_size": 20,
+            "font_color": arcade.color.BLACK,
+            "border_width": 2,
+            "border_color": CELL_BORDER_COLOR,
+            "bg_color": CELL_COLOR,
+
+            # used if button is pressed
+            "bg_color_pressed": MAN_COLOR_DARK,
+            "border_color_pressed": MAN_COLOR_DARK,  # also used when hovered
+            "font_color_pressed": BG_COLOR,
+        }
+
+        self.c_box = arcade.gui.UIBoxLayout()
+
+        button_game_with_friend = arcade.gui.UIFlatButton(text="Играть с другом",
+                                                          width=230,
+                                                          style=man_style)
+        self.c_box.add(button_game_with_friend.with_space_around(top=0))
+        button_game_with_friend.on_click = self.on_click_button_game_with_friend
+
+        button_instruction = arcade.gui.UIFlatButton(text="Инструкция",
+                                                     width=230,
+                                                     style=man_style)
+        self.c_box.add(button_instruction.with_space_around(top=10))
+
+        button_quit = arcade.gui.UIFlatButton(text="Выйти из игры",
+                                              width=230,
+                                              style=man_style)
+        self.c_box.add(button_quit.with_space_around(top=10))
+        button_quit.on_click = self.on_click_button_quit
+
+        self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="center",
+                                                   anchor_y="center",
+                                                   child=self.c_box))
+
+        self.l_texture = arcade.load_texture("images/Menu_Man.png")
+        self.r_texture = arcade.load_texture("images/Menu_Woman.png")
+
+    def on_click_button_game_with_friend(self, event):
+        game_view = GameView()
+        game_view.setup()
+        self.window.show_view(game_view)
+
+    def on_click_button_quit(self, event):
+        arcade.exit()
+
     def on_show(self):
         arcade.set_background_color((217, 205, 175))
         arcade.set_viewport(0, SCREEN_WIDTH + SHIFT * 2 - 1, 0, SCREEN_HEIGHT + SHIFT * 2 - 1)
+        self.window.background_color = BG_COLOR
 
     def on_draw(self):
         arcade.start_render()
         arcade.draw_text("БИТВА ПОЛОВ",
                          (SCREEN_WIDTH + SHIFT * 2) / 2,
-                         SCREEN_HEIGHT / 2,
+                         SCREEN_HEIGHT - 90,
                          arcade.color.AUBURN,
                          font_size=50,
                          anchor_x="center")
         arcade.draw_text("BATTLE OF GENDER",
                          (SCREEN_WIDTH + SHIFT * 2) / 2,
-                         SCREEN_HEIGHT / 2 - 75,
+                         SCREEN_HEIGHT - 140,
                          arcade.color.AUBURN,
                          font_size=20,
                          anchor_x="center")
-
-    def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
-        game_view = GameView()
-        game_view.setup()
-        self.window.show_view(game_view)
+        self.manager.draw()
+        arcade.draw_scaled_texture_rectangle(texture=self.l_texture, center_x=250, center_y=350)
+        arcade.draw_scaled_texture_rectangle(texture=self.r_texture, center_x=SCREEN_WIDTH + 350, center_y=350)
 
 
 class GameView(arcade.View):
