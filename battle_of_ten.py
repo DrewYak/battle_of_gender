@@ -91,7 +91,7 @@ class WarriorSprite(arcade.Sprite):
                 self.center_y += self.change_y
 
 
-class InstructionView(arcade.View):
+class MenuView(arcade.View):
 
     def __init__(self):
         super().__init__()
@@ -145,6 +145,7 @@ class InstructionView(arcade.View):
         game_view = GameView()
         game_view.setup()
         self.window.show_view(game_view)
+        self.manager.disable()
 
     def on_click_button_quit(self, event):
         arcade.exit()
@@ -493,8 +494,10 @@ class GameView(arcade.View):
 
 def main():
     window = arcade.Window(SCREEN_WIDTH + SHIFT * 2, SCREEN_HEIGHT, SCREEN_TITLE)
-    start_view = InstructionView()
+
+    start_view = MenuView()
     window.show_view(start_view)
+
     arcade.run()
 
 
