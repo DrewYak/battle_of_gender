@@ -6,6 +6,7 @@ import game_logic
 # region Константы
 SPRITE_SCALING_CELL = 1.0
 SPRITE_SCALING_WARRIOR = 87 / 128
+SPRITE_SCALING_INSTRUCTION = 1.0
 SIZE = 8
 SHIFT = 300
 
@@ -54,6 +55,8 @@ WOMAN_STYLE = {
     "border_color_pressed": WOMAN_COLOR_DARK,  # also used when hovered
     "font_color_pressed": BG_COLOR,
 }
+
+
 # endregion
 
 
@@ -127,10 +130,10 @@ class MenuView(arcade.View):
         self.c_box.add(button_game_with_friend.with_space_around(top=0))
         button_game_with_friend.on_click = self.on_click_button_game_with_friend
 
-        button_instruction = arcade.gui.UIFlatButton(text="Инструкция",
-                                                     width=230,
-                                                     style=MAN_STYLE)
-        self.c_box.add(button_instruction.with_space_around(top=10))
+        # button_instruction = arcade.gui.UIFlatButton(text="Инструкция",
+        #                                              width=230,
+        #                                              style=MAN_STYLE)
+        # self.c_box.add(button_instruction.with_space_around(top=10))
 
         button_quit = arcade.gui.UIFlatButton(text="Выйти из игры",
                                               width=230,
@@ -149,6 +152,7 @@ class MenuView(arcade.View):
         game_view = GameView()
         game_view.setup()
         self.window.show_view(game_view)
+        self.window.set_caption("Битва полов - Игра с другом")
         self.manager.disable()
 
     def on_click_button_quit(self, event):
@@ -202,24 +206,36 @@ class GameView(arcade.View):
         self.manager.enable()
 
         self.l_box = arcade.gui.UIBoxLayout()
-        left_button_end_turn = arcade.gui.UIFlatButton(text="Завершить ход",
-                                                       width=215,
-                                                       style=MAN_STYLE)
+
+        left_button_end_turn = arcade.gui.UIFlatButton(text="Завершить ход", width=215, style=MAN_STYLE)
         left_button_end_turn.on_click = self.on_click_left_end_turn
         self.l_box.add(left_button_end_turn.with_space_around(top=60, left=8))
-        self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="left",
-                                                   anchor_y="top",
-                                                   child=self.l_box))
+
+        left_button_restart = arcade.gui.UIFlatButton(text="Играть сначала", width=215, style=MAN_STYLE)
+        left_button_restart.on_click = self.on_click_left_restart
+        self.l_box.add(left_button_restart.with_space_around(top=296, left=8))
+
+        left_button_quit = arcade.gui.UIFlatButton(text="Выйти из игры", width=215, style=MAN_STYLE)
+        left_button_quit.on_click = self.on_click_left_quit
+        self.l_box.add(left_button_quit.with_space_around(top=10, left=8))
+
+        self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="left", anchor_y="top", child=self.l_box))
 
         self.r_box = arcade.gui.UIBoxLayout(align="right")
-        right_button_end_turn = arcade.gui.UIFlatButton(text="Завершить ход",
-                                                        width=215,
-                                                        style=WOMAN_STYLE)
+
+        right_button_end_turn = arcade.gui.UIFlatButton(text="Завершить ход", width=215, style=WOMAN_STYLE)
         right_button_end_turn.on_click = self.on_click_right_end_turn
         self.r_box.add(right_button_end_turn.with_space_around(top=60, right=8))
-        self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="right",
-                                                   anchor_y="top",
-                                                   child=self.r_box))
+
+        right_button_restart = arcade.gui.UIFlatButton(text="Играть сначала", width=215, style=WOMAN_STYLE)
+        right_button_restart.on_click = self.on_click_right_restart
+        self.r_box.add(right_button_restart.with_space_around(top=296, right=8))
+
+        right_button_quit = arcade.gui.UIFlatButton(text="Выйти из игры", width=215, style=WOMAN_STYLE)
+        right_button_quit.on_click = self.on_click_right_quit
+        self.r_box.add(right_button_quit.with_space_around(top=10, right=8))
+
+        self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="right", anchor_y="top", child=self.r_box))
 
         self.is_LALT_press = False
 
@@ -296,6 +312,26 @@ class GameView(arcade.View):
         if self.g.mode == "Turn W":
             self.g.complete_move()
 
+    def on_click_left_restart(self, event):
+        if self.g.mode in ["Turn M", "Win M", "Win W"]:
+            game_view = GameView()
+            game_view.setup()
+            self.window.show_view(game_view)
+
+    def on_click_right_restart(self, event):
+        if self.g.mode in ["Turn W", "Win M", "Win W"]:
+            game_view = GameView()
+            game_view.setup()
+            self.window.show_view(game_view)
+
+    def on_click_left_quit(self, event):
+        if self.g.mode in ["Turn M", "Win M", "Win W"]:
+            arcade.exit()
+
+    def on_click_right_quit(self, event):
+        if self.g.mode in ["Turn W", "Win M", "Win W"]:
+            arcade.exit()
+
     def draw_left_text_move_points(self):
         self.left_text_move_points = arcade.Text(text=f"{self.g.move_points}",
                                                  start_x=10,
@@ -343,6 +379,38 @@ class GameView(arcade.View):
                                                  anchor_y="top")
         self.left_text_move_points.draw()
 
+    def draw_instructions(self):
+        self.left_instruction = arcade.Sprite(filename="images/left_instruction.png",
+                                              center_y=542,
+                                              center_x=115)
+        self.left_instruction.draw()
+        self.right_instruction = arcade.Sprite(filename="images/right_instruction.png",
+                                               center_y=542,
+                                               center_x=SCREEN_WIDTH + 2 * SHIFT - 115)
+        self.right_instruction.draw()
+
+    def draw_win_m(self):
+        self.text_win_m = arcade.Text(text=f"ПОБЕДА МУЖЧИН",
+                                      color=MAN_COLOR_DARK,
+                                      start_x=SCREEN_WIDTH / 2 + SHIFT,
+                                      start_y=SCREEN_HEIGHT / 2,
+                                      font_size=50,
+                                      font_name="arial",
+                                      anchor_x="center",
+                                      anchor_y="center")
+        self.text_win_m.draw()
+
+    def draw_win_w(self):
+        self.text_win_m = arcade.Text(text=f"ПОБЕДА ЖЕНЩИН",
+                                      color=WOMAN_COLOR_DARK,
+                                      start_x=SCREEN_WIDTH / 2 + SHIFT,
+                                      start_y=SCREEN_HEIGHT / 2,
+                                      font_size=50,
+                                      font_name="arial",
+                                      anchor_x="center",
+                                      anchor_y="center")
+        self.text_win_m.draw()
+
     def draw_right_line_move_points(self):
         if self.g.move_points > 0:
             center_x_begin = SCREEN_HEIGHT + 2 * SHIFT - 50
@@ -372,6 +440,8 @@ class GameView(arcade.View):
         arcade.start_render()
         self.scene.draw()
 
+        self.draw_instructions()
+
         for ws in self.scene.get_sprite_list("Warriors"):
             if ws.warrior.health <= 0:
                 ws.remove_from_sprite_lists()
@@ -386,6 +456,11 @@ class GameView(arcade.View):
         elif self.g.mode == "Turn W":
             self.draw_right_text_move_points()
             self.draw_right_line_move_points()
+
+        if self.g.mode == "Win M":
+            self.draw_win_m()
+        elif self.g.mode == "Win W":
+            self.draw_win_w()
 
         if self.is_LALT_press:
             self.draw_damage()
@@ -500,9 +575,9 @@ class GameView(arcade.View):
 
 
 def main():
-    window = arcade.Window(SCREEN_WIDTH + SHIFT * 2, SCREEN_HEIGHT, SCREEN_TITLE)
-    start_view = MenuView()
-    window.show_view(start_view)
+    window = arcade.Window(SCREEN_WIDTH + SHIFT * 2, SCREEN_HEIGHT, "Битва полов - Меню")
+    menu_view = MenuView()
+    window.show_view(menu_view)
     arcade.run()
 
 
