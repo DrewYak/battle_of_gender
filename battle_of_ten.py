@@ -2,6 +2,7 @@ import arcade
 import arcade.gui
 import math
 import game_logic
+import PyInstaller
 
 # region Константы
 SPRITE_SCALING_CELL = 1.0
@@ -575,6 +576,8 @@ class GameView(arcade.View):
 
 
 def main():
+    if getattr(PyInstaller.sys, 'frozen', False) and hasattr(PyInstaller.sys, '_MEIPASS'):
+        PyInstaller.os.chdir(PyInstaller.sys._MEIPASS)
     window = arcade.Window(SCREEN_WIDTH + SHIFT * 2, SCREEN_HEIGHT, "Битва полов - Меню")
     menu_view = MenuView()
     window.show_view(menu_view)
